@@ -4,4 +4,4 @@ title: About
 permalink: /about/
 ---
 
-My name is Kobe Sarausad and I am currently an undergraduate student at the University of Washington. I am interested in studying in Statistics/Data Science. 
+Hello! My name is Kobe Sarausad and I am currently an undergraduate student at the University of Washington. I enjoy playing with data in my free time, using programs such as: rstudio, tableau, vscode, and etc... I am able to program in Java, Python, and R. 
