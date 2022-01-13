@@ -13,98 +13,103 @@
 <body>
   <section>
 
-    <section id="left"> 
-      <img src="https://uploads.weconnect.com/9aa53c41031c621ba042a819fa21bf1b2a1b6b25/h6audy0a72w4u7m8p9a6lc9apx.png">
+    <header>
+      <img
+        src="https://uploads.weconnect.com/9aa53c41031c621ba042a819fa21bf1b2a1b6b25/h6audy0a72w4u7m8p9a6lc9apx.png">
+    </header>
+
+    <section id="main">
       <div id="search">
         <input id="address" type="textbox" value="Sammamish, WA" />
         <input id="submit-btn" type="button" value="Search" />
       </div>
+
+      <div id="map">
+
+        <script>
+
+          var coordinates = [
+            { lng: -122.013728385717, lat: 47.6648207492444 },
+            { lng: -122.078981963819, lat: 47.6479974145503 },
+            { lng: -122.087596806755, lat: 47.5932618050127 },
+            { lng: -121.997594226447, lat: 47.5445094367914 },
+            { lng: -121.970210447407, lat: 47.548134729852 },
+            { lng: -121.961741268821, lat: 47.551909477805 },
+            { lng: -121.95327990928, lat: 47.5700615611291 },
+            { lng: -121.96366917805, lat: 47.6220961202225 }];
+
+          console.log(coordinates);
+
+          // 1. Initialize a basic map
+          function initMap() {
+            const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 8,
+              center: {
+                lat: -122.0356,
+                lng: 47.6163
+              }
+            });
+
+            // 2. Initialize the GeoCoder API
+            const geocoder = new google.maps.Geocoder();
+
+            // 3. So when the user clicks on the submit BTN, geocode the given address if possible
+            document.getElementById("submit-btn").addEventListener("click", () => {
+              geocodeAddress(geocoder, map);
+            });
+          }
+
+          // Handle conversion of text address to coordinates
+          function geocodeAddress(geocoder, resultsMap) {
+            const address = document.getElementById("address").value;
+
+            // Search for the address with the API
+            geocoder.geocode({ address: address }, (results, status) => {
+              if (status === "OK") {
+                // Display response in the console
+                console.log(results);
+
+                // Set the location of the map obtained by the API
+                resultsMap.setCenter(results[0].geometry.location);
+
+                // Add the marker with the obtained location
+                new google.maps.Marker({
+                  map: resultsMap,
+                  position: results[0].geometry.location,
+                });
+
+                resultsMap.setZoom(12);
+
+                const samBorder = new google.maps.Polygon({
+                  paths: coordinates
+                });
+
+                console.log(samBorder.getPath());
+
+                const response = google.maps.geometry.poly.containsLocation(
+                  results[0].geometry.location, samBorder
+                )
+
+                if (response) {
+                  alert("Great! Your address is in range!");
+                } else {
+                  alert("Bummer! Your address is not in range...");
+                }
+
+              } else {
+                alert("Geocode error: " + status);
+              }
+            });
+          }
+
+        </script>
+        <script
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9xXFErT57IF4AQgAEYOt0X2LDB5_ri4s&callback=initMap&libraries=geometry&v=weekly">
+          </script>
+      </div>
     </section>
 
-    <div id="map">
 
-      <script>
-
-        var coordinates = [
-          { lng: -122.013728385717, lat: 47.6648207492444 },
-          { lng: -122.078981963819, lat: 47.6479974145503 },
-          { lng: -122.087596806755, lat: 47.5932618050127 },
-          { lng: -121.997594226447, lat: 47.5445094367914 },
-          { lng: -121.970210447407, lat: 47.548134729852 },
-          { lng: -121.961741268821, lat: 47.551909477805 },
-          { lng: -121.95327990928, lat: 47.5700615611291 },
-          { lng: -121.96366917805, lat: 47.6220961202225 }];
-
-        console.log(coordinates);
-
-        // 1. Initialize a basic map
-        function initMap() {
-          const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 8,
-            center: {
-              lat: -122.0356,
-              lng: 47.6163
-            }
-          });
-
-          // 2. Initialize the GeoCoder API
-          const geocoder = new google.maps.Geocoder();
-
-          // 3. So when the user clicks on the submit BTN, geocode the given address if possible
-          document.getElementById("submit-btn").addEventListener("click", () => {
-            geocodeAddress(geocoder, map);
-          });
-        }
-
-        // Handle conversion of text address to coordinates
-        function geocodeAddress(geocoder, resultsMap) {
-          const address = document.getElementById("address").value;
-
-          // Search for the address with the API
-          geocoder.geocode({ address: address }, (results, status) => {
-            if (status === "OK") {
-              // Display response in the console
-              console.log(results);
-
-              // Set the location of the map obtained by the API
-              resultsMap.setCenter(results[0].geometry.location);
-
-              // Add the marker with the obtained location
-              new google.maps.Marker({
-                map: resultsMap,
-                position: results[0].geometry.location,
-              });
-
-              resultsMap.setZoom(12);
-
-              const samBorder = new google.maps.Polygon({
-                paths: coordinates
-              });
-
-              console.log(samBorder.getPath());
-
-              const response = google.maps.geometry.poly.containsLocation(
-                results[0].geometry.location, samBorder
-              )
-
-              if (response) {
-                alert("Great! Your address is in range!");
-              } else {
-                alert("Bummer! Your address is not in range...");
-              }
-
-            } else {
-              alert("Geocode error: " + status);
-            }
-          });
-        }
-
-      </script>
-      <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9xXFErT57IF4AQgAEYOt0X2LDB5_ri4s&callback=initMap&libraries=geometry&v=weekly">
-        </script>
-  </section>
-  </div>
 </body>
 
 </html>

@@ -5,24 +5,21 @@ body {
   font-family: "Kanit", sans-serif;
 }
 
-#left {
-  display: flex;
-  flex-direction: column;
-}
-
-#left img {
+header img {
   width: 30%;
   height: auto;
 }
 
-section {
+#main {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 #search {
-  margin-top:auto;
-  margin-bottom: auto;
+  text-align: center;
+  padding: 10px;
 }
 
 #map {
