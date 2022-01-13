@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie-edge">
-  <title>Bruh</title>
+  <title>Address Search</title>
 </head>
 
 <body>
@@ -20,11 +20,14 @@
 
     <section id="main">
       <div id="search">
+        <p>Input your address to see if your address is in the vicinity of MQP!</p>
         <input id="address" type="textbox" value="Sammamish, WA" />
         <input id="submit-btn" type="button" value="Search" />
       </div>
 
       <div id="map">
+
+        <script src="mqp/geoxml3.js"></script>
 
         <script>
 
@@ -38,8 +41,6 @@
             { lng: -121.95327990928, lat: 47.5700615611291 },
             { lng: -121.96366917805, lat: 47.6220961202225 }];
 
-          console.log(coordinates);
-
           // 1. Initialize a basic map
           function initMap() {
             const map = new google.maps.Map(document.getElementById("map"), {
@@ -49,6 +50,9 @@
                 lng: 47.6163
               }
             });
+
+            var myParser = new geoXML3.parser({map: map});
+          myParser.parse('/mqp/mqp.kml');
 
             // 2. Initialize the GeoCoder API
             const geocoder = new google.maps.Geocoder();
@@ -81,10 +85,17 @@
                 resultsMap.setZoom(12);
 
                 const samBorder = new google.maps.Polygon({
-                  paths: coordinates
+                  paths: coordinates,
+                  strokeColor: "#FF0000",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "#FF0000",
+                  fillOpacity: 0.35,
                 });
 
-                console.log(samBorder.getPath());
+                // console.log(samBorder.getPath());
+
+                samBorder.setMap(resultsMap);
 
                 const response = google.maps.geometry.poly.containsLocation(
                   results[0].geometry.location, samBorder
