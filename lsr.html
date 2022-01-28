@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="lsr.css">
+  <script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
+  <script src="testjs/lsr.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200&display=swap"
+    rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Least Square Regression</title>
+</head>
+
+<body>
+  <main>
+    <section>
+      <p class="info">Mean Squared of Residuals: <span id="resid"></span></p>
+      <div id="scatter"></div>
+      <div id="inputs">
+        <div>
+          <p>Slope</p>
+          <input type="range" min="1" max="25" value="5" class="slider" id="slope">
+        </div>
+        <div>
+          <p>N</p>
+          <input type="range" min="1" max="1000" value="5" class="slider" id="n">
+        </div>
+        <div>
+          <p>Intercept</p>
+          <input type="range" min="1" max="10" value="5" class="slider" id="int">
+        </div>
+      </div>
+
+      <div id="info-bot">
+        <p>Slope: <span id="slope-num"></span></p>
+        <p> N: <span id="n-num"></span></p>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>
