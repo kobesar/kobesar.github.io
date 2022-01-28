@@ -3,14 +3,24 @@
 body {
   background-color: #dde1b7;
   font-family: "Kanit", sans-serif;
+  margin: 0px;
+  padding: 0px;
 }
 
 header img {
+  padding: 10px;
   width: 30%;
   height: auto;
 }
 
+header {
+  background-color: #b7c269;
+  margin: 0;
+  padding: 0;
+}
+
 #main {
+  margin-top: 5%;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -30,4 +40,12 @@ header img {
   margin-left: auto;
   margin-right: auto;
   padding: 20px;
+}
+
+p {
+  text-align: center;
+}
+
+#address-res {
+  font-size: 200%;
 }

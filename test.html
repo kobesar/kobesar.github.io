@@ -40,6 +40,8 @@
             { lng: -121.961741268821, lat: 47.551909477805 },
             { lng: -121.95327990928, lat: 47.5700615611291 },
             { lng: -121.96366917805, lat: 47.6220961202225 }];
+          let mqp = [];
+          let bruh = [];
 
           // 1. Initialize a basic map
           function initMap() {
@@ -51,8 +53,25 @@
               }
             });
 
-            var myParser = new geoXML3.parser({ map: map });
-            myParser.parse('/mqp/mqp.kml');
+            // var myParser = new geoXML3.parser({ map: map });
+            // myParser.parse('https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/mqp/mqp.kml');
+
+            var test = new geoXML3.parser({
+              map: map, //your map
+              afterParse: function (doc) { // callback after parse
+                for (var i = 0; i < doc[0].placemarks.length; i++) {
+                  let coords = doc[0].placemarks[i].LineString[0].coordinates;
+                  for (let i = 0; i < coords.length; i++) {
+                    // bruh.push(coords[i]['lat'], coords[i]['lng']);
+                    bruh.push(coords[i]);
+                  }
+                  // console.log(doc[0].placemarks[i].LineString[0].coordinates) //for coordinates - doc[0].placemarks[i] get more info
+                }
+              }
+            });
+
+            mqp = test.parse('https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/mqp/mqp.kml');
+
 
             // 2. Initialize the GeoCoder API
             const geocoder = new google.maps.Geocoder();
@@ -70,8 +89,6 @@
             // Search for the address with the API
             geocoder.geocode({ address: address }, (results, status) => {
               if (status === "OK") {
-                // Display response in the console
-                console.log(results);
 
                 // Set the location of the map obtained by the API
                 resultsMap.setCenter(results[0].geometry.location);
@@ -85,15 +102,13 @@
                 resultsMap.setZoom(12);
 
                 const samBorder = new google.maps.Polygon({
-                  paths: coordinates,
+                  paths: bruh,
                   strokeColor: "#FF0000",
                   strokeOpacity: 0.8,
                   strokeWeight: 2,
                   fillColor: "#FF0000",
                   fillOpacity: 0.35,
                 });
-
-                // console.log(samBorder.getPath());
 
                 samBorder.setMap(resultsMap);
 
@@ -102,9 +117,9 @@
                 )
 
                 if (response) {
-                  alert("Great! Your address is in range!");
+                  document.getElementById("address-res").textContent = address + " is in range!";
                 } else {
-                  alert("Bummer! Your address is not in range...");
+                  document.getElementById("address-res").textContent = address + " is not in range!";
                 }
 
               } else {
@@ -117,6 +132,10 @@
         <script
           src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9xXFErT57IF4AQgAEYOt0X2LDB5_ri4s&callback=initMap&libraries=geometry&v=weekly">
           </script>
+      </div>
+
+      <div>
+        <p><span id="address-res"></span></p>
       </div>
     </section>
 
