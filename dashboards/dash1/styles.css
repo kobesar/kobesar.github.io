@@ -1,0 +1,74 @@
+/*
+Name: Kobe Sarausad
+Date: 2/8/2022
+Section: AC
+
+This CSS file styles the data dashboard, giving it a monotone color scheme. Also, organizes the
+elements in a manner where they all fit nicely onto one row.
+*/
+
+* {
+  font-family: 'Kanit', sans-serif;
+  font-weight: 200;
+}
+
+#user-inputs, section, article, #plots {
+  display: flex;
+}
+
+#plots, #user-inputs {
+  flex-direction: row;
+}
+
+#user-inputs, #summary {
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+#user-inputs {
+  margin-bottom: 10%;
+  flex-wrap: wrap;
+  gap: 3%;
+}
+
+#plot-pane, #summary {
+  flex-direction: column;
+}
+
+article {
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 5%;
+  border: 2px solid black;
+  width: 95%;
+}
+
+#summary {
+  font-size: x-large;
+  margin: auto;
+  margin-left: 5%;
+  margin-bottom: 15%;
+  width: 30%;
+}
+
+#summary > p {
+  font-weight: 500;
+  text-align: center;
+}
+
+#plot-pane {
+  width: 70%;
+}
+
+.plot {
+  width: 60%;
+}
+
+.desc {
+  font-size: small;
+  font-weight: 200;
+  font-style: italic;
+  color: "#7f7f7f";
+}

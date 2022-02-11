@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+  Name: Kobe Sarausad
+  Date: 2/8/2022
+  Section: AC
+
+  This HTML file structures the dashboard that is outputted. It is a relatively simple layout with
+  two plots that are shown. However, it does include around 4 user inputted values which change
+  the plots.
+-->
+<html>
+
+<head>
+  <script src="index.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.8.3.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <title>Fiscal Data Dashboard</title>
+</head>
+
+<body>
+  <main>
+    <h1>Fiscal Indicators vs. Stock Market</h1>
+    <article>
+      <section id="summary"></section>
+      <section id="plot-pane">
+        <div id="plots">
+          <div id="fisc-plot" class="plot"></div>
+          <div id="stock-plot" class="plot"></div>
+        </div>
+        <div id="user-inputs">
+          <div>
+            <label for="select">Choose a variable:</label>
+
+            <select id="select">
+            </select>
+          </div>
+          <div>
+            <label for="start-date">Start date:</label>
+
+            <input type="date" id="start-date" value="2022-02-02" min="2000-01-01" max="2022-02-02">
+          </div>
+          <div>
+            <label for="end-date">End date:</label>
+
+            <input type="date" id="end-date" value="2022-02-02" min="2000-01-01" max="2022-02-02">
+          </div>
+
+          <input type="submit" id="submit-btn" value="Search">
+
+          <div>
+            <label for="log">Log Scale</label>
+            <input type="checkbox" id="log" name="log">
+          </div>
+        </div>
+      </section>
+    </article>
+  </main>
+  <footer>
+    <!--
+      The fiscal data was fetched using the FiscalData API from the U.S. treasury
+      https://fiscaldata.treasury.gov/
+      The stock market data was fetched using the Alpha Vantage API from
+      https://www.alphavantage.co/
+    -->
+  </footer>
+</body>
+
+</html>
