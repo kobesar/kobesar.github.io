@@ -3,7 +3,7 @@ var margin = { top: 50, right: 50, bottom: 50, left: 50 },
     height = 500 - margin.top - margin.bottom,
     padding = 2
 
-var svg = d3.select("#scatter")
+var canvas = d3.select("#scatter")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height)
@@ -13,15 +13,15 @@ var tooltip = d3.select("#scatter")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-var gen = svg.append("svg")
-var cor = svg.append("svg")
+var gen = canvas.append("svg")
+var cor = canvas.append("svg")
 
-var label = svg.append("text")
+var label = canvas.append("text")
     .attr("id", "point-label")
     .style('font-size', '10px')
     .style('weight', '100')
 
-var courseLab = svg.append("text")
+var courseLab = canvas.append("text")
     .text("Course: , Score: ")
     .attr("id", "course-label")
     .attr('transform', 'translate(' + (margin.left + width / 2) + ',' + (margin.top) + ")")
@@ -29,7 +29,7 @@ var courseLab = svg.append("text")
     .style('font-size', '10px')
     .style('weight', '100')
 
-var title = svg.append("text")
+var title = canvas.append("text")
     .text("Course Outcome Index")
     .style('text-anchor', 'middle')
     .style('font-size', '18px')
@@ -78,13 +78,13 @@ d3.csv('test2.csv').then(function (d) {
     makeLabels();
 
     setTimeout(function () {
-        svg.selectAll(".cor")
+        canvas.selectAll(".cor")
             .transition()
             .duration(1000)
             .each(function (d) {
                 if (d.course == coursePicked) {
                     makeScoreCard(d);
-                    svg.select("#course-label")
+                    canvas.select("#course-label")
                         .transition()
                         .duration(2000)
                         .text("Course: " + coursePicked + ", Score: " + (Math.round(d.score * 100) / 100))
@@ -101,7 +101,7 @@ d3.csv('test2.csv').then(function (d) {
                         .style('stroke', 'black')
                         .attr('r', RADIUS * 1.5)
 
-                    svg.append('g')
+                    canvas.append('g')
                         .append('path')
                         .attr('d', [[d.x, d.y], [d.x - 50, d.y - 100]])
                 } else {
@@ -150,7 +150,7 @@ d3.csv('test2.csv').then(function (d) {
     function makeBeeswarm(data, options) {
         var xAxis = d3.axisBottom(x);
 
-        svg.append("g")
+        canvas.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (margin.top * 5.5) + ")")
             .call(xAxis);
@@ -211,7 +211,7 @@ d3.csv('test2.csv').then(function (d) {
     function makeLabels() {
         var labelPosY = 100;
 
-        svg.append("svg:defs").append("svg:marker")
+        canvas.append("svg:defs").append("svg:marker")
             .attr("id", "triangle")
             .attr("refX", 6)
             .attr("refY", 6)
@@ -222,7 +222,7 @@ d3.csv('test2.csv').then(function (d) {
             .attr("d", "M 0 0 12 6 0 12 3 6")
             .style("fill", "black");
 
-        svg.append("line")
+        canvas.append("line")
             .attr("x1", 720)
             .attr("y1", labelPosY + 15)
             .attr("x2", 760)
@@ -231,7 +231,7 @@ d3.csv('test2.csv').then(function (d) {
             .attr("stroke", "black")
             .attr("marker-end", "url(#triangle)");
 
-        svg.append("svg:defs").append("svg:marker")
+        canvas.append("svg:defs").append("svg:marker")
             .attr("id", "triangle")
             .attr("refX", 6)
             .attr("refY", 6)
@@ -242,7 +242,7 @@ d3.csv('test2.csv').then(function (d) {
             .attr("d", "M 0 0 12 6 0 12 3 6")
             .style("fill", "black");
 
-        svg.append("line")
+        canvas.append("line")
             .attr("x1", 240)
             .attr("y1", labelPosY + 15)
             .attr("x2", 200)
@@ -251,14 +251,14 @@ d3.csv('test2.csv').then(function (d) {
             .attr("stroke", "black")
             .attr("marker-end", "url(#triangle)");
 
-        svg.append('text')
+        canvas.append('text')
             .style('font-size', '10px')
             .attr('transform', 'translate(' + (margin.right + (width / 2) + 250) + ',' + labelPosY + ")")
             .attr('text-anchor', 'middle')
             .text('More completions than expected');
 
 
-        svg.append('text')
+        canvas.append('text')
             .style('font-size', '10px')
             .attr('transform', 'translate(' + (margin.left + (width / 2) - 250) + ',' + labelPosY + ")")
             .attr('text-anchor', 'middle')
@@ -267,7 +267,7 @@ d3.csv('test2.csv').then(function (d) {
 
     function makeLegend() {
         // Selected course
-        svg.append("circle")
+        canvas.append("circle")
             .attr("cx", 30)
             .attr("cy", 20)
             .attr('r', RADIUS)
@@ -304,7 +304,7 @@ d3.csv('test2.csv').then(function (d) {
             })
 
         //Specific department courses
-        svg.append("circle")
+        canvas.append("circle")
             .attr("cx", 30)
             .attr("cy", 40)
             .attr('r', RADIUS)
@@ -345,7 +345,7 @@ d3.csv('test2.csv').then(function (d) {
             })
 
         // All department courses
-        svg.append("circle")
+        canvas.append("circle")
             .attr("cx", 30)
             .attr("cy", 60)
             .attr('r', RADIUS)
@@ -384,21 +384,21 @@ d3.csv('test2.csv').then(function (d) {
                     .attr("r", RADIUS)
             })
 
-        svg.append("text")
+        canvas.append("text")
             .attr("x", 40)
             .attr("y", 20)
             .text(coursePicked)
             .style("font-size", "12px")
             .attr("alignment-baseline", "middle")
 
-        svg.append("text")
+        canvas.append("text")
             .attr("x", 40)
             .attr("y", 40)
             .text(coursePicked.match(/\D+/)[0].trim() + " Courses")
             .style("font-size", "12px")
             .attr("alignment-baseline", "middle")
 
-        svg.append("text")
+        canvas.append("text")
             .attr("x", 40)
             .attr("y", 60)
             .text("Deparment Averages")
@@ -410,7 +410,7 @@ d3.csv('test2.csv').then(function (d) {
         var percentile = getPercentile(d.score)
         console.log(getScore(75))
 
-        var summaryCard = svg.append('svg')
+        var summaryCard = canvas.append('svg')
             .attr('width', width / 2)
             .attr('height', height / 2);
 
