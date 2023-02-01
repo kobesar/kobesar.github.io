@@ -41,7 +41,7 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
     var histogram = d3.histogram()
       .value(function (d) { return d.price; })   // I need to give the vector of value
       .domain(x.domain())  // then the domain of the graphic
-      .thresholds(x.ticks(70)); // then the numbers of bins
+      .thresholds(x.ticks(100)); // then the numbers of bins
 
     // And apply this function to data to get the bins
     var bins = histogram(newData);
@@ -64,16 +64,6 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
 
     // remove old elements
     appending.exit().remove();
-
-    // svg.selectAll("rect")
-    //   .data(bins)
-    //   .enter()
-    //   .append("rect")
-    //   .attr("x", 1)
-    //   .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
-    //   .attr("width", function (d) { return x(d.x1) - x(d.x0) - 1; })
-    //   .attr("height", function (d) { return height - y(d.length); })
-    //   .style("fill", "#69b3a2")
   }
 
   updateLegend(data);
