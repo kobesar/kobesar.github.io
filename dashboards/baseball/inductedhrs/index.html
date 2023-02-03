@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>D3 Web Page</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+
+<body>
+  <h1>Welcome to my D3 Web Page</h1>
+  <div id="chart"></div>
+  <script>
+    document.getElementById("chart").innerHTML = "";
+
+    const margin = { top: 20, right: 10, bottom: 20, left: 10 };
+
+    const width = 600 - margin.left - margin.right,
+      height = 100 - margin.top - margin.bottom,
+      rwidth = width + margin.left + margin.right,
+      rheight = height + margin.top + margin.bottom;
+
+    const svg = d3
+      .select("#chart")
+      .append("svg")
+      .attr("viewBox", `0 0 ${rwidth} ${rheight}`)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    d3.csv("../data/inductedhrs.csv").then(function(data) {
+      console.log(data);
+    });
+  </script>
+</body>
+
+</html>
