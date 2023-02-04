@@ -3,12 +3,46 @@
 
 <head>
   <meta charset="utf-8">
-  <title>D3 Web Page</title>
+  <title>Inducted HRs</title>
   <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
+
+    text {
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    div.tooltip {
+      position: absolute;
+      text-align: center;
+      width: 50px;
+      height: auto;
+      padding: 4px;
+      font: 10px Open Sans;
+      background: lightsteelblue;
+      border: 0px;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .axis text {
+      fill: black;
+    }
+
+    .axis line {
+      stroke: gray;
+      stroke-width: 2px;
+    }
+
+    .axis path {
+      stroke: gray;
+      stroke-width: 2px;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>Welcome to my D3 Web Page</h1>
+  <h1>Fuck</h1>
   <div id="chart"></div>
   <script>
     document.getElementById("chart").innerHTML = "";
@@ -16,7 +50,7 @@
     const margin = { top: 20, right: 10, bottom: 20, left: 10 };
 
     const width = 600 - margin.left - margin.right,
-      height = 100 - margin.top - margin.bottom,
+      height = 200 - margin.top - margin.bottom,
       rwidth = width + margin.left + margin.right,
       rheight = height + margin.top + margin.bottom;
 
@@ -27,9 +61,163 @@
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("../data/inductedhrs.csv").then(function(data) {
-      console.log(data);
+    // Create the 5.0 COI scale
+    const x = d3.scaleLinear().domain([0, 80]).range([0, width]);
+    // Draw the axis
+    var xAxis = d3.axisBottom(x).ticks(40);
+    // Add axis to the svg
+
+    d3
+      .select("#chart")
+      .append("g")
+      .attr("class", "axis")
+      .attr(
+        "transform",
+        "translate(0," + (height - margin.bottom * 0.3) + ")"
+      )
+      .call(xAxis);
+
+    const yCenter = 80;
+    const RADIUS = 1;
+
+    // Tooltip for hover
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("left", "-9999px")
+      .style("visibility", "hidden");
+
+    d3.csv("https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/dashboards/baseball/data/inductedhrs.csv").then(function (data) {
+      createPoints(data)
     });
+
+    var selectedPlayer;
+    var selected;
+    var others;
+    var selectedText;
+
+    function createPoints(data) {
+      // Filter out data and create a new array to feed into force simulation
+      var nodes = data
+
+        .map(function (node) {
+          return {
+            x: x(node.hr),
+            y: yCenter + Math.abs(Math.random()),
+            player: node.player,
+            year: node.year,
+          };
+        });
+
+      // Specify force specifications for the circles
+      var force = d3
+        .forceSimulation(nodes)
+        .force("forceX", d3.forceX((d) => d.x).strength(1))
+        .force("forceY", d3.forceY(yCenter).strength(0.1))
+        .force(
+          "charge",
+          d3.forceManyBody().distanceMax(2).distanceMin(1).strength(1)
+        )
+        .force("collide", d3.forceCollide().radius(RADIUS).strength(1))
+        .on("tick", tick)
+        .stop();
+
+      function tick() {
+        for (var i = 0; i < nodes.length; i++) {
+          var node = nodes[i];
+          node.cx = node.x;
+          node.cy = node.y;
+        }
+      }
+      const NUM_ITERATIONS = 200;
+      force.tick(NUM_ITERATIONS);
+      force.stop();
+      // Add the points to the plot
+      // Depending on whether the course is chosen, the fill color and opacity will be different
+
+
+      svg
+        .selectAll("circle")
+        .data(nodes)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) {
+          return d.x
+        })
+        .attr("cy", function (d) {
+          return d.y;
+        })
+        .attr("r", RADIUS)
+        .attr("class", function (d) {
+          return d.player;
+        })
+        .style("fill", "#63a0f6")
+        .each(function () {
+          d3.select(this)
+            .on("mouseover", function (event, d) {
+              selectedPlayer = d.player;
+
+              selected = d3.selectAll("." + selectedPlayer)
+
+              selectedText = d3.selectAll("text." + selectedPlayer)
+
+              selected
+                .style("stroke", "black")
+
+              selectedText
+                .style("visibility", "visible")
+
+              others = svg.selectAll("*:not(." + selectedPlayer + ")")
+
+              others
+                .style("opacity", 0.2)
+
+              tooltip
+                .style("opacity", 1)
+                .style("visibility", "visible")
+                .html("Player: " + d.player + "<br>" + "Year: " + d.year);
+            })
+            .on("mousemove", function (event) {
+              tooltip
+                .style("left", event.pageX + 5 + "px")
+                .style("top", event.pageY - 50 + "px");
+            })
+            .on("mouseout", function () {
+              selected
+                .style("stroke", "none")
+
+              selectedText
+                .style("visibility", "hidden")
+
+              others
+                .style("opacity", 1)
+
+              tooltip.style("opacity", 0).style("visibility", "visible");
+            });
+        });
+
+      svg
+        .selectAll("text")
+        .data(nodes)
+        .enter()
+        .append("text")
+        .attr("x", function (d) {
+          return d.x
+        })
+        .attr("y", function (d) {
+          return d.y;
+        })
+        .attr("class", function (d) {
+          return d.player
+        })
+        .style("visibility", "hidden")
+        .style("font-size", "4px")
+        .text(function (d) {
+          return d.season;
+        })
+    }
   </script>
 </body>
 
