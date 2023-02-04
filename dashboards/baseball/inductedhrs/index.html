@@ -89,9 +89,12 @@
       .style("left", "-9999px")
       .style("visibility", "hidden");
 
-    d3.csv("https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/dashboards/baseball/data/inductedhrs.csv").then(function (data) {
-      createPoints(data)
+    d3.csv("https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/dashboards/baseball/data/hf.csv").then(function (data) {
+      // createPoints(data)
+      console.log(data);
+
     });
+
 
     var selectedPlayer;
     var selected;
