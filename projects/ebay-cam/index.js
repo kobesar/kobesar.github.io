@@ -1,5 +1,5 @@
 var margin = { top: 10, right: 30, bottom: 30, left: 40 },
-  width = 1000 - margin.left - margin.right,
+  width = 600 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
@@ -41,7 +41,7 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
     var histogram = d3.histogram()
       .value(function (d) { return d.price; })   // I need to give the vector of value
       .domain(x.domain())  // then the domain of the graphic
-      .thresholds(x.ticks(100)); // then the numbers of bins
+      .thresholds(x.ticks(50)); // then the numbers of bins
 
     // And apply this function to data to get the bins
     var bins = histogram(newData);
@@ -61,6 +61,27 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
       .attr("width", function (d) { return x(d.x1) - x(d.x0) - 1; })
       .attr("height", function (d) { return height - y(d.length); })
       .style("fill", "#69b3a2")
+      .each(function () {
+        d3.select(this)
+          .on("mouseover", function (event, d) {
+            d3.select(this)
+              .transition()
+              .duration(100)
+              .style("stroke", "black")
+          })
+          .on("mousemove", function (event) {
+            // tooltip
+            //   .style("left", event.pageX + 5 + "px")
+            //   .style("top", event.pageY - 50 + "px");
+          })
+          .on("mouseout", function () {
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .style("stroke", "none")
+            // tooltip.style("opacity", 0).style("visibility", "visible");
+          });
+      });
 
     // remove old elements
     appending.exit().remove();
