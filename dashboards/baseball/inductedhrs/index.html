@@ -5,9 +5,11 @@
   <meta charset="utf-8">
   <title>Inducted HRs</title>
   <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://unpkg.com/d3-simple-slider"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap');
 
+    div,
     text {
       font-family: 'Ubuntu', sans-serif;
     }
@@ -15,10 +17,10 @@
     div.tooltip {
       position: absolute;
       text-align: center;
-      width: 50px;
-      height: auto;
-      padding: 4px;
-      font: 10px Open Sans;
+      width: 5%;
+      height: 5%;
+      padding: 2px;
+      font-size: 1%;
       background: lightsteelblue;
       border: 0px;
       border-radius: 8px;
@@ -38,12 +40,28 @@
       stroke: gray;
       stroke-width: 2px;
     }
+
+    #chart-container {
+      width: 50%;
+    }
+
+    #slider,
+    #chart-container {
+      margin-left: auto;
+      margin-right: auto;
+    }
   </style>
 </head>
 
 <body>
-  <h1>Fuck</h1>
-  <div id="chart"></div>
+  <div id="chart-container">
+    <div id="slider"></div>
+    <div id="chart"></div>
+    <div>
+      Showing the distribution of the difference between the number of votes needed and the number
+      of votes received tells us what was expected and who exceeded/surrendered to the expecations.
+    </div>
+  </div>
   <script>
     document.getElementById("chart").innerHTML = "";
 
@@ -58,17 +76,42 @@
       .select("#chart")
       .append("svg")
       .attr("viewBox", `0 0 ${rwidth} ${rheight}`)
+
+    svg.append("rect")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("fill", "#ededed");
+
+
+    svg
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    var slider = d3
+      .sliderHorizontal()
+      .min(1936)
+      .max(2018)
+      .step(1)
+      .width(300)
+      .displayValue(true)
+
+    d3.select('#slider')
+      .append('svg')
+      .attr('width', 500)
+      .attr('height', 100)
+      .append('g')
+      .style('margin-left', 'auto')
+      .style('margin-right', 'auto')
+      .attr('transform', 'translate(30,30)')
+      .call(slider);
+
     // Create the 5.0 COI scale
-    const x = d3.scaleLinear().domain([0, 80]).range([0, width]);
+    const x = d3.scaleLinear().domain([-600, 600]).range([0, width]);
     // Draw the axis
-    var xAxis = d3.axisBottom(x).ticks(40);
+    var xAxis = d3.axisBottom(x).ticks(10);
     // Add axis to the svg
 
-    d3
-      .select("#chart")
+    svg
       .append("g")
       .attr("class", "axis")
       .attr(
@@ -78,7 +121,7 @@
       .call(xAxis);
 
     const yCenter = 80;
-    const RADIUS = 1;
+    const RADIUS = 5;
 
     // Tooltip for hover
     const tooltip = d3
@@ -90,9 +133,12 @@
       .style("visibility", "hidden");
 
     d3.csv("https://raw.githubusercontent.com/kobesar/kobesar.github.io/master/dashboards/baseball/data/hf.csv").then(function (data) {
-      // createPoints(data)
-      console.log(data);
+      slider.on("onchange", function (year) {
+        svg.selectAll("circle")
+          .remove()
 
+        makeChart(data, year);
+      })
     });
 
 
@@ -101,16 +147,20 @@
     var others;
     var selectedText;
 
-    function createPoints(data) {
+    function makeChart(data, year) {
       // Filter out data and create a new array to feed into force simulation
       var nodes = data
-
+        .filter(function (node) {
+          return node.yearID == year;
+        })
         .map(function (node) {
           return {
-            x: x(node.hr),
+            x: x(node.over_needed),
             y: yCenter + Math.abs(Math.random()),
-            player: node.player,
-            year: node.year,
+            player: node.name_given,
+            id: node.playerID,
+            year: node.yearID,
+            votes: node.votes
           };
         });
 
@@ -118,10 +168,10 @@
       var force = d3
         .forceSimulation(nodes)
         .force("forceX", d3.forceX((d) => d.x).strength(1))
-        .force("forceY", d3.forceY(yCenter).strength(0.1))
+        .force("forceY", d3.forceY(yCenter).strength(1))
         .force(
           "charge",
-          d3.forceManyBody().distanceMax(2).distanceMin(1).strength(1)
+          d3.forceManyBody().distanceMax(5).distanceMin(2).strength(1)
         )
         .force("collide", d3.forceCollide().radius(RADIUS).strength(1))
         .on("tick", tick)
@@ -153,34 +203,20 @@
           return d.y;
         })
         .attr("r", RADIUS)
-        .attr("class", function (d) {
-          return d.player;
+        .attr("id", function (d) {
+          return d.id;
         })
         .style("fill", "#63a0f6")
         .each(function () {
           d3.select(this)
             .on("mouseover", function (event, d) {
-              selectedPlayer = d.player;
-
-              selected = d3.selectAll("." + selectedPlayer)
-
-              selectedText = d3.selectAll("text." + selectedPlayer)
-
-              selected
+              d3.select(this)
                 .style("stroke", "black")
-
-              selectedText
-                .style("visibility", "visible")
-
-              others = svg.selectAll("*:not(." + selectedPlayer + ")")
-
-              others
-                .style("opacity", 0.2)
 
               tooltip
                 .style("opacity", 1)
                 .style("visibility", "visible")
-                .html("Player: " + d.player + "<br>" + "Year: " + d.year);
+                .html("Player: " + d.player + "<br>" + "Votes: " + d.votes);
             })
             .on("mousemove", function (event) {
               tooltip
@@ -188,38 +224,11 @@
                 .style("top", event.pageY - 50 + "px");
             })
             .on("mouseout", function () {
-              selected
+              d3.select(this)
                 .style("stroke", "none")
-
-              selectedText
-                .style("visibility", "hidden")
-
-              others
-                .style("opacity", 1)
-
               tooltip.style("opacity", 0).style("visibility", "visible");
             });
         });
-
-      svg
-        .selectAll("text")
-        .data(nodes)
-        .enter()
-        .append("text")
-        .attr("x", function (d) {
-          return d.x
-        })
-        .attr("y", function (d) {
-          return d.y;
-        })
-        .attr("class", function (d) {
-          return d.player
-        })
-        .style("visibility", "hidden")
-        .style("font-size", "4px")
-        .text(function (d) {
-          return d.season;
-        })
     }
   </script>
 </body>
