@@ -24,6 +24,7 @@ d3.select("#prod")
   .text(function (d) { return d; }) // text showed in the menu
   .attr("value", function (d) { return d; }) // corresponding value returned by the button
 
+
 d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_data.csv').then(function (data) {
   data = cleanData(data);
 
@@ -56,10 +57,9 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
     var appending = svg.selectAll('rect')
       .data(bins).enter()
       .append("rect")
-      .attr("x", 1)
+      // .attr("x", 0)
+      // .attr("y", 0)
       .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
-      .attr("width", function (d) { return x(d.x1) - x(d.x0) - 1; })
-      .attr("height", function (d) { return height - y(d.length); })
       .style("fill", "#69b3a2")
       .each(function () {
         d3.select(this)
@@ -83,8 +83,10 @@ d3.csv('https://raw.githubusercontent.com/kobesar/ebaytracker/master/data/full_d
           });
       });
 
-    // remove old elements
-    appending.exit().remove();
+    appending.transition("move")
+      .duration(5000)
+      .attr("width", function (d) { return x(d.x1) - x(d.x0) - 1; })
+      .attr("height", function (d) { return height - y(d.length); })
   }
 
   updateLegend(data);
