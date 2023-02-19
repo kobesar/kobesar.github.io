@@ -60,3 +60,15 @@ select {
   font-style: italic;
   font-size: 12px;
 }
+
+.dataTables_wrapper {
+  margin-right: auto;
+  margin-left: auto;
+  width: 50%
+}
+
+img {
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+}

@@ -88,9 +88,9 @@ d3.csv("https://raw.githubusercontent.com/NSC508/Datathon2023/main/data/neighbor
     .data(data)
     .enter()
     .append("text")
-    .filter(function(d) { return d.year == 2022})
+    .filter(function(d) { return d.year == 2008})
     .attr("x", function (d) { return xScale(d.year) })
-    .attr("y", function (d) { return yScale(d.n) - 10 })
+    .attr("y", function (d) { return yScale(d.n) - 30 })
     .attr('font-size', '10px')
     .attr("text-anchor", "start")
     .attr('class', (d, i) => {
@@ -126,13 +126,13 @@ d3.csv("https://raw.githubusercontent.com/NSC508/Datathon2023/main/data/neighbor
     // .attr('stroke', (d, i) => d3.schemeCategory10[i])
     .attr('stroke', 'black')
     .attr('stroke-opacity', 0.3)
-    .attr('stroke-width', 1)
+    .attr('stroke-width', 2)
     .attr('class', (d, i) => {
       return d[0].substring(0, 3);
     })
     .on("mouseover", function (d, i) {
       var curr = d3.select(this)
-      d3.select(this).attr('stroke-opacity', 1).attr('stroke-width', 2);
+      d3.select(this).attr('stroke-opacity', 1).attr('stroke-width', 2.5);
       d3.selectAll("circle." + curr.attr("class"))
         .raise()
         .attr('opacity', 1)
@@ -142,7 +142,7 @@ d3.csv("https://raw.githubusercontent.com/NSC508/Datathon2023/main/data/neighbor
     })
     .on("mouseout", function (d, i) {
       var curr = d3.select(this)
-      d3.select(this).attr('stroke-opacity', 0.3).attr('stroke-width', 1);
+      d3.select(this).attr('stroke-opacity', 0.3).attr('stroke-width', 2);
       d3.selectAll("circle." + curr.attr("class"))
         .attr('opacity', 0)
       d3.selectAll("text." + curr.attr("class"))
