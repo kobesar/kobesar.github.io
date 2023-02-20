@@ -49,13 +49,6 @@
   <div class="plot">
     <div id="crime-tot"></div>
   </div>
-  <!-- <div id="plot2-selections">
-    <select id="year-select"></select>
-    <select id="neighbor-select"></select>
-  </div> -->
-  <!-- <div class="plot">
-    <div id="crime-circle"></div>
-  </div> -->
   <div class="text">
     <p>
       Crime in downtown Seattle has a significant impact on the public, including residents,
@@ -94,9 +87,6 @@
     <div id="crime-tot"></div>
   </div>
   <div class="plot">
-    <div id="crime-after"></div>
-  </div>
-  <div class="plot">
     <div>
       <div id="report-input">
         <input type="radio" name="report-type" value="report" checked> Report Time<br>
@@ -106,49 +96,6 @@
       </div>
     </div>
     <div id="crime-hour"></div>
-  </div>
-  <div class="text">
-    <p>
-      Consider the start date vs report date
-    </p>
-    <p>
-      After dropping the values before 2008, we looked at the difference between the start time and
-      the report time of different crimes. Here are the overall statistics:
-
-      count 1000192
-      mean -7 days +01:00:14.019099334
-      std 74 days 08:32:17.741724305
-      min -738 days +05:34:13
-      25% -21 days +10:08:00
-      50% -13 days +11:04:38.500000
-      75% -5 days +09:38:36
-      max 5367 days 08:23:43
-      Name: time_diff, dtype: object
-
-
-      If we look at only data that has a difference of fewer than 30 days, we get the following:
-
-      count 975916
-      mean -13 days +09:19:58.894871076
-      std 9 days 21:07:06.260867877
-      min -30 days +01:00:00
-      25% -21 days +07:55:00
-      50% -13 days +06:42:00
-      75% -5 days +02:32:50.750000
-      max 29 days 12:59:00
-      Name: time_diff, dtype: object
-    </p>
-    <p>
-      Looking at the Fast Fourier Transform to analyze the difference in frequencies across
-      days/months/years, we get the following
-
-      There seem to be no clear spikes in the data, meaning we don’t have any dominant frequencies.
-      This indicates no seasonality in the data.
-
-    </p>
-    <p>
-      Results... Plot showing predictions. Map showing the n
-    </p>
   </div>
   <div class="text">
     <p>
