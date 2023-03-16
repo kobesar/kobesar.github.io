@@ -1,1 +1,1 @@
-A repository for storing and updating [my personal webpage](https://kobesar.github.io).
+[My personal webpage](https://kobesar.github.io).
