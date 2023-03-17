@@ -252,13 +252,13 @@ test_df = test_df.set_index('start_date_time')
     <p>
       Our final datasets ended up looking like this (train dataset for the Larceny-Theft Parent
       Group pictured below)</p>
-    <img src="https://kobesar.github.io/datathon/ss/table.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/table.png">
     <h3>Baseline Model</h3>
     <p>The first model we made acted as a naive baseline. The model simply says that tomorrow’s
       crime count will be the same as today’s. Here’s how well it fits on our dataset (split into
       the first three predictions)
     </p>
-    <img src="https://kobesar.github.io/datathon/ss/plot1.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot1.png">
 
     <p>We can see that the data follows the trend, but obviously it lags behind. Furthermore, this
       model would be horrible at predicting the future with unknown data. However, it gives us a
@@ -278,7 +278,7 @@ tf.keras.layers.Dense(units=1)
     <p>
       Our loss in this case is Mean Squared Error, while we use the Adam optimizer. Let’s take a
       look at how this simplistic model performs:</p>
-    <img src="https://kobesar.github.io/datathon/ss/plot2.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot2.png">
     <p>
       It looks like it’s better! The prdedictions are much closer to the labels than in our baseline
       case which is promising! Our mean absolute error in this case is 0.7216, we’re getting better.
@@ -294,7 +294,7 @@ tf.keras.layers.Dense(units=1)
       input, and have the 9th day as our label. Move throughout the entirety of the dataset using
       this approach and you have yourself a windowed dataset! Here’s a diagram from Tensorflow’s API
       to help explain this concept:</p>
-    <img src="https://kobesar.github.io/datathon/ss/plot3.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot3.png">
     <p>
       Let’s use this new dataset coupled with adding more dense blocks to our linear model to make a
       deep neural network!</p>
@@ -309,14 +309,14 @@ tf.keras.layers.Dense(units=1),
 tf.keras.layers.Reshape([1, -1]),
 ])
 </code></pre>
-    <img src="https://kobesar.github.io/datathon/ss/plot4.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot4.png">
     <p>
       It seems to fit really well for the first couple data points! It struggled with the middle
       case where there was high fluctuation in the actual label, but it found the trend for the
       other two almost perfectly. Our mean average error in this case is only 0.66! Let’s try some
       other methods and see if we can do even better</p>
     <h3>Convolutional Neural Netowork</h3>
-    <img src="https://kobesar.github.io/datathon/ss/plot5.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot5.png">
     <p>Generally used in image processing, convolutional neural networks apply a convolution on top
       of the input data. It allows us to pool together our input data, so that we can pass in
       multiple lengths on inputs.</p>
@@ -338,14 +338,14 @@ tf.keras.layers.Dense(units=1),
       Recurrent Neural Networks use Long Short-Term Memory Layers. These keep an internal state
       through the time steps, having a “memory” of sorts while going through the layers. As a
       result, they work really well for time series data</p>
-    <img src="https://kobesar.github.io/datathon/ss/plot6.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot6.png">
     <p>
       In the cases without fluctuation, the RNN seems to fit a little bit better than the other
       models. It sticks very close to the trend line. The mean average error in this case is 0.65.
 
       So, the overall performance of our models looks like so:
     </p>
-    <img src="https://kobesar.github.io/datathon/ss/plot7.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/plot7.png">
     <p>
       We showed a model can learn pretty well! Other than on the large day-by-day changes, the model
       is able to fit to the data quite nicely. The best model in this case (looking at the test
@@ -357,7 +357,7 @@ tf.keras.layers.Dense(units=1),
     <p>
       Here are the values for the next 4 most common Parent Groups
     </p>
-    <img src="https://kobesar.github.io/datathon/ss/table2.png">
+    <img src="https://kobesar.github.io/projects/datathon/ss/table2.png">
 
   </div>
 

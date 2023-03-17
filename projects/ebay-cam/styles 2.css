@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@200;400&display=swap');
+
+* {
+  font-family: 'Mukta', sans-serif;
+}
+
+h1, p {
+  text-align: center;
+}
+
+#plot {
+  margin-right: auto;
+  margin-left: auto;
+  width: 50%;
+}
+
+span {
+  font-style: italic;
+}
+
+#chart-container {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+select {
+  margin-left: auto;
+  margin-right: auto;
+}

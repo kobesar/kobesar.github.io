@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400&display=swap');
+
+* {
+  font-family: 'Source Sans Pro', sans-serif;
+}
+
+p {
+  font-weight: 100;
+  font-size: 18px;
+}
+
+.plot {
+  width: 60%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+h3 {
+  font-weight: 400;
+  font-size: 24px;
+}
+
+#plot2 {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+select {
+  width: auto;
+  height: 1%;
+}
+
+.svg-style {
+  /* background-color: #f4f4f4; */
+  display: block;
+  margin: auto;
+}
+
+.text {
+  width: 45%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#report-input {
+  background-color: #f4f4f4;
+  padding: 1%;
+  border-radius: 8%;
+  margin-top: 2%;
+  margin-left: 10%;
+  position: absolute;
+}
+
+.plot-desc {
+  font-weight: 100;
+  font-style: italic;
+  font-size: 12px;
+}
+
+#ci-table {
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+#DataTables_Table_0_wrapper {
+  margin-right: auto;
+  margin-left: auto;
+  width: 50%;
+}
+
+img {
+  margin-right: auto;
+  margin-left: auto;
+  width: 100%;
+}
+
+#author {
+  display: flex;
+  justify-content: center;
+}
+
+#author img {
+  width: auto;
+  margin-right: 2px;
+  margin-left: 0;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+#author a {
+  margin-top: auto;
+  margin-bottom: auto;
+}
