@@ -1,3 +1,26 @@
+# Jekyll
 _site
 .sass-cache
 .jekyll-metadata
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Personal/Private
+applications/
+coverletters/
+*.private.*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+node_modules/
+dist/
+build/
