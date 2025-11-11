@@ -1,52 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
    <meta charset="utf-8">
-   <meta name="keywords" content="kobe sarausad,
-	kobe sarausad,
-	university of washington statistics">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="keywords" content="kobe sarausad, data science, statistics, seattle mariners, university of washington">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta name="description" content="Kobe Sarausad - Data Analyst at Seattle Mariners. Statistics & Data Science graduate from University of Washington.">
 
-   <title>{{ site.title }}</title>
+   <title>{{ page.title }} | {{ site.title }}</title>
 
-   <link rel="stylesheet" type="text/css" href="{{ site.path }}/css/style.css" >
-   <link href="css/bootstrap.min.css" rel="stylesheet">
-   <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-   <script src="{{ site.path }}/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" type="text/css" href="{{ site.path }}/css/modern-theme.css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand">{{ site.title }}</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            	 <li><a class="active" href="//kobesar.github.io">Home</a></li>
-           <li><a class="active" href="work.html">Work</a></li>
-           <li><a class="active" href="resume.html">Resume</a></li>
-           <li><a class="active" href="contact.html">Contact</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+  <nav id="main-nav">
+    <div class="nav-container">
+      <a href="{{ site.path }}/" class="nav-brand">{{ site.title }}</a>
 
-    <div class="container">
-      <div class="content">
-        {{ content }}
-      </div>
-    </div><!-- /.container -->
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+      </button>
 
+      <ul class="nav-links" id="nav-links">
+        <li><a href="{{ site.path }}/">Home</a></li>
+        <li><a href="{{ site.path }}/work.html">Work</a></li>
+        <li><a href="{{ site.path }}/resume.html">Resume</a></li>
+        <li><a href="{{ site.path }}/contact.html">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
 
+  <div class="container">
+    <div class="content fade-in">
+      {{ content }}
+    </div>
+  </div>
 
+  <script>
+    // Mobile menu toggle
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    if (mobileMenuToggle) {
+      mobileMenuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+      });
+    }
+
+    // Active nav link highlighting
+    const currentPath = window.location.pathname;
+    const navLinksElements = document.querySelectorAll('.nav-links a');
+
+    navLinksElements.forEach(link => {
+      if (link.getAttribute('href') === currentPath ||
+          (currentPath === '/' && link.getAttribute('href') === '{{ site.path }}/') ||
+          (currentPath.includes(link.getAttribute('href')) && link.getAttribute('href') !== '{{ site.path }}/')) {
+        link.classList.add('active');
+      }
+    });
+
+    // Navbar scroll effect
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+  </script>
 </body>
 </html>
