@@ -12,22 +12,63 @@ title: 'Resume'
   gtag('config', 'G-YGC2WC6QEG');
 </script>
 
-<h1>Resume</h1>
+<h1>Resume & CV</h1>
 <p style="color: var(--text-secondary); font-size: 1.125rem; margin-bottom: 2rem;">
-  View or download my resume below.
+  View or download my resume and curriculum vitae below.
 </p>
 
-<div class="resume-container">
-  <a href="resume.pdf" class="resume-download" target="_blank">
-    <i class="fas fa-download"></i> Download PDF
+<div style="display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+  <a href="#resume-section" class="btn btn-primary" onclick="showDocument('resume')">
+    <i class="fas fa-file-alt"></i> View Resume
+  </a>
+  <a href="#cv-section" class="btn btn-primary" onclick="showDocument('cv')" style="background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);">
+    <i class="fas fa-file-alt"></i> View CV
+  </a>
+</div>
+
+<div id="resume-section" class="resume-container" style="display: block;">
+  <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Resume</h2>
+  <a href="documents/resume.pdf" class="resume-download" target="_blank" download>
+    <i class="fas fa-download"></i> Download Resume PDF
   </a>
 
   <div class="resume-embed">
-    <object data="resume.pdf" type="application/pdf" width="100%" height="800px">
+    <object data="documents/resume.pdf" type="application/pdf" width="100%" height="800px">
       <p style="padding: 2rem; text-align: center; color: var(--text-secondary);">
         It appears you don't have a PDF plugin for this browser.
-        <a href="resume.pdf" style="color: var(--primary-color); font-weight: 600;">Click here</a> to download and view my resume.
+        <a href="documents/resume.pdf" style="color: var(--primary-color); font-weight: 600;">Click here</a> to download and view my resume.
       </p>
     </object>
   </div>
 </div>
+
+<div id="cv-section" class="resume-container" style="display: none; margin-top: 3rem;">
+  <h2 style="color: var(--text-primary); margin-bottom: 1rem;">Curriculum Vitae</h2>
+  <a href="documents/cv.pdf" class="resume-download" target="_blank" download>
+    <i class="fas fa-download"></i> Download CV PDF
+  </a>
+
+  <div class="resume-embed">
+    <object data="documents/cv.pdf" type="application/pdf" width="100%" height="800px">
+      <p style="padding: 2rem; text-align: center; color: var(--text-secondary);">
+        It appears you don't have a PDF plugin for this browser.
+        <a href="documents/cv.pdf" style="color: var(--primary-color); font-weight: 600;">Click here</a> to download and view my CV.
+      </p>
+    </object>
+  </div>
+</div>
+
+<script>
+  function showDocument(type) {
+    const resumeSection = document.getElementById('resume-section');
+    const cvSection = document.getElementById('cv-section');
+
+    if (type === 'resume') {
+      resumeSection.style.display = 'block';
+      cvSection.style.display = 'none';
+    } else if (type === 'cv') {
+      resumeSection.style.display = 'none';
+      cvSection.style.display = 'block';
+    }
+  }
+</script>
