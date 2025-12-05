@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Score Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid #d3d6da;
+            padding: 12px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #787c7e;
+            margin-top: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* Login Section */
+        .login-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .login-section h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #1a1a1b;
+        }
+
+        /* Input Styles */
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 1px solid #d3d6da;
+            border-radius: 4px;
+            font-family: inherit;
+            margin-bottom: 12px;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #787c7e;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #6aaa64;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background-color: #5a9a54;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.secondary {
+            background-color: #787c7e;
+            margin-top: 8px;
+        }
+
+        button.secondary:hover {
+            background-color: #6a6d70;
+        }
+
+        /* Score Entry Section */
+        .score-entry {
+            display: none;
+        }
+
+        .score-entry.active {
+            display: block;
+        }
+
+        .user-info {
+            background-color: #f6f7f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logout-btn {
+            background-color: #787c7e;
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1b;
+        }
+
+        .guess-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .guess-btn {
+            padding: 16px;
+            background-color: #ffffff;
+            border: 2px solid #d3d6da;
+            color: #1a1a1b;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 0;
+        }
+
+        .guess-btn:hover {
+            border-color: #787c7e;
+            background-color: #f6f7f8;
+        }
+
+        .guess-btn.selected {
+            background-color: #6aaa64;
+            border-color: #6aaa64;
+            color: white;
+        }
+
+        .guess-btn.failed {
+            background-color: #787c7e;
+            border-color: #787c7e;
+            color: white;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            margin-top: 30px;
+        }
+
+        .leaderboard h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid #d3d6da;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        .leaderboard-table th {
+            background-color: #f6f7f8;
+            font-weight: 700;
+            border-bottom: 1px solid #d3d6da;
+        }
+
+        .leaderboard-table tr:not(:last-child) td {
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .leaderboard-table .rank {
+            width: 50px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .leaderboard-table .wins {
+            width: 80px;
+            text-align: center;
+            font-weight: 700;
+            color: #6aaa64;
+        }
+
+        .rank-1 {
+            background-color: #fff8e1;
+        }
+
+        /* Daily Results */
+        .daily-results {
+            margin-top: 30px;
+        }
+
+        .daily-results h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .day-result {
+            border: 1px solid #d3d6da;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background-color: #f6f7f8;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d3d6da;
+        }
+
+        .day-date {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .day-winner {
+            color: #6aaa64;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .day-scores {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .player-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background-color: white;
+            border-radius: 4px;
+        }
+
+        .player-score.winner {
+            border: 2px solid #6aaa64;
+            background-color: #f0f8ef;
+        }
+
+        .player-score .name {
+            font-weight: 600;
+        }
+
+        .player-score .score {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .player-score .guesses {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .player-score .tiles {
+            font-size: 12px;
+            color: #787c7e;
+        }
+
+        .tiebreaker-note {
+            font-size: 11px;
+            color: #c9b458;
+            font-style: italic;
+            margin-left: 4px;
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 13px;
+            color: #787c7e;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Message */
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            .guess-options {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+
+            .guess-btn {
+                padding: 12px 8px;
+                font-size: 16px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>WORDLE TRACKER</h1>
+        <div class="subtitle">Track daily scores with friends</div>
+    </header>
+
+    <div class="container">
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="playerNameInput" placeholder="Your name" autocomplete="off">
+            <button onclick="login()">Continue</button>
+        </div>
+
+        <!-- Score Entry Section -->
+        <div class="score-entry" id="scoreEntry">
+            <div class="user-info">
+                <span class="user-name" id="currentUser"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div id="messageContainer"></div>
+
+            <div class="form-group">
+                <label>Today's Wordle Result</label>
+                <div class="guess-options">
+                    <button class="guess-btn" onclick="selectGuess(1)">1</button>
+                    <button class="guess-btn" onclick="selectGuess(2)">2</button>
+                    <button class="guess-btn" onclick="selectGuess(3)">3</button>
+                    <button class="guess-btn" onclick="selectGuess(4)">4</button>
+                    <button class="guess-btn" onclick="selectGuess(5)">5</button>
+                    <button class="guess-btn" onclick="selectGuess(6)">6</button>
+                    <button class="guess-btn failed" onclick="selectGuess('X')">X</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Paste Your Wordle Grid</label>
+                <textarea id="gridInput" placeholder="Paste your Wordle emoji grid here...
+⬜🟨⬜⬜⬜
+⬜🟩⬜🟩⬜
+🟩🟩🟩🟩🟩"></textarea>
+                <div class="help-text">Include the colored squares (⬜🟨🟩) from your Wordle result</div>
+            </div>
+
+            <button onclick="submitScore()">Submit Score</button>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard">
+                <h2>🏆 All-Time Leaderboard</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank">#</th>
+                            <th>Player</th>
+                            <th class="wins">Wins</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Daily Results -->
+            <div class="daily-results">
+                <h2>📅 Recent Results</h2>
+                <div id="dailyResultsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Management
+        let currentPlayer = null;
+        let selectedGuessCount = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedPlayer = localStorage.getItem('currentPlayer');
+            if (savedPlayer) {
+                currentPlayer = savedPlayer;
+                showScoreEntry();
+            }
+        });
+
+        // Login
+        function login() {
+            const nameInput = document.getElementById('playerNameInput');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                showMessage('Please enter your name', 'error');
+                return;
+            }
+
+            currentPlayer = name;
+            localStorage.setItem('currentPlayer', name);
+
+            // Initialize player if new
+            const players = getPlayers();
+            if (!players[name]) {
+                players[name] = { totalWins: 0 };
+                savePlayers(players);
+            }
+
+            showScoreEntry();
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentPlayer');
+            currentPlayer = null;
+            selectedGuessCount = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('scoreEntry').classList.remove('active');
+            document.getElementById('playerNameInput').value = '';
+        }
+
+        // Show Score Entry
+        function showScoreEntry() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('scoreEntry').classList.add('active');
+            document.getElementById('currentUser').textContent = currentPlayer;
+            updateLeaderboard();
+            updateDailyResults();
+            checkTodaySubmission();
+        }
+
+        // Check if player already submitted today
+        function checkTodaySubmission() {
+            const today = getToday();
+            const dailyScores = getDailyScores();
+
+            if (dailyScores[today] && dailyScores[today][currentPlayer]) {
+                showMessage('You already submitted your score for today!', 'success');
+                disableSubmission();
+            } else {
+                enableSubmission();
+            }
+        }
+
+        function disableSubmission() {
+            document.getElementById('gridInput').disabled = true;
+            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = true);
+            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Already Submitted Today';
+            submitBtn.style.backgroundColor = '#d3d6da';
+        }
+
+        function enableSubmission() {
+            document.getElementById('gridInput').disabled = false;
+            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = false);
+            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Score';
+            submitBtn.style.backgroundColor = '#6aaa64';
+        }
+
+        // Select Guess Count
+        function selectGuess(count) {
+            selectedGuessCount = count;
+            document.querySelectorAll('.guess-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        // Parse Emoji Grid
+        function parseGrid(gridText) {
+            const green = '🟩';
+            const yellow = '🟨';
+
+            let greenCount = 0;
+            let yellowCount = 0;
+
+            for (let char of gridText) {
+                if (char === green) greenCount++;
+                if (char === yellow) yellowCount++;
+            }
+
+            return {
+                green: greenCount,
+                yellow: yellowCount,
+                tileScore: greenCount * 1 + yellowCount * 0.5
+            };
+        }
+
+        // Submit Score
+        function submitScore() {
+            if (!selectedGuessCount) {
+                showMessage('Please select your guess count', 'error');
+                return;
+            }
+
+            const gridText = document.getElementById('gridInput').value.trim();
+            if (!gridText) {
+                showMessage('Please paste your Wordle grid', 'error');
+                return;
+            }
+
+            const gridData = parseGrid(gridText);
+            const today = getToday();
+
+            // Save daily score
+            const dailyScores = getDailyScores();
+            if (!dailyScores[today]) {
+                dailyScores[today] = {};
+            }
+
+            dailyScores[today][currentPlayer] = {
+                guesses: selectedGuessCount,
+                green: gridData.green,
+                yellow: gridData.yellow,
+                tileScore: gridData.tileScore,
+                grid: gridText
+            };
+
+            saveDailyScores(dailyScores);
+
+            // Calculate and update winner
+            calculateDailyWinner(today);
+
+            // Clear form
+            selectedGuessCount = null;
+            document.getElementById('gridInput').value = '';
+            document.querySelectorAll('.guess-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            showMessage('Score submitted successfully!', 'success');
+            updateLeaderboard();
+            updateDailyResults();
+            disableSubmission();
+        }
+
+        // Calculate Daily Winner
+        function calculateDailyWinner(date) {
+            const dailyScores = getDailyScores();
+            const dayScores = dailyScores[date];
+
+            if (!dayScores) return;
+
+            let winner = null;
+            let bestGuesses = Infinity;
+            let bestTileScore = -1;
+            let isTiebreaker = false;
+
+            // Find winner
+            for (let player in dayScores) {
+                const score = dayScores[player];
+                const guesses = score.guesses === 'X' ? Infinity : parseInt(score.guesses);
+
+                if (guesses < bestGuesses) {
+                    winner = player;
+                    bestGuesses = guesses;
+                    bestTileScore = score.tileScore;
+                    isTiebreaker = false;
+                } else if (guesses === bestGuesses && guesses !== Infinity) {
+                    // Tie - use tiebreaker
+                    if (score.tileScore > bestTileScore) {
+                        winner = player;
+                        bestTileScore = score.tileScore;
+                        isTiebreaker = true;
+                    }
+                }
+            }
+
+            // Update winner in daily scores
+            dailyScores[date]._winner = winner;
+            dailyScores[date]._isTiebreaker = isTiebreaker;
+            saveDailyScores(dailyScores);
+
+            // Update player's total wins
+            if (winner) {
+                const players = getPlayers();
+                if (!players[winner]) {
+                    players[winner] = { totalWins: 0 };
+                }
+
+                // Recalculate total wins
+                const allWins = {};
+                for (let date in dailyScores) {
+                    const dayWinner = dailyScores[date]._winner;
+                    if (dayWinner) {
+                        allWins[dayWinner] = (allWins[dayWinner] || 0) + 1;
+                    }
+                }
+
+                // Update all players' win counts
+                for (let player in players) {
+                    players[player].totalWins = allWins[player] || 0;
+                }
+
+                savePlayers(players);
+            }
+        }
+
+        // Update Leaderboard
+        function updateLeaderboard() {
+            const players = getPlayers();
+            const tbody = document.getElementById('leaderboardBody');
+
+            // Sort by wins
+            const sortedPlayers = Object.entries(players).sort((a, b) => b[1].totalWins - a[1].totalWins);
+
+            tbody.innerHTML = '';
+            sortedPlayers.forEach(([name, data], index) => {
+                const row = tbody.insertRow();
+                if (index === 0 && data.totalWins > 0) {
+                    row.classList.add('rank-1');
+                }
+
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td>${name}</td>
+                    <td class="wins">${data.totalWins}</td>
+                `;
+            });
+        }
+
+        // Update Daily Results
+        function updateDailyResults() {
+            const dailyScores = getDailyScores();
+            const container = document.getElementById('dailyResultsContainer');
+
+            // Sort dates descending
+            const dates = Object.keys(dailyScores).sort().reverse();
+
+            container.innerHTML = '';
+            dates.slice(0, 10).forEach(date => {
+                const dayData = dailyScores[date];
+                const winner = dayData._winner;
+                const isTiebreaker = dayData._isTiebreaker;
+
+                // Sort players by score
+                const players = Object.entries(dayData)
+                    .filter(([key]) => !key.startsWith('_'))
+                    .sort((a, b) => {
+                        const guessA = a[1].guesses === 'X' ? Infinity : parseInt(a[1].guesses);
+                        const guessB = b[1].guesses === 'X' ? Infinity : parseInt(b[1].guesses);
+
+                        if (guessA !== guessB) return guessA - guessB;
+                        return b[1].tileScore - a[1].tileScore;
+                    });
+
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day-result';
+
+                let scoresHTML = players.map(([name, score]) => {
+                    const isWinner = name === winner;
+                    const showTiebreaker = isTiebreaker && isWinner;
+
+                    return `
+                        <div class="player-score ${isWinner ? 'winner' : ''}">
+                            <span class="name">${name}</span>
+                            <span class="score">
+                                <span class="guesses">${score.guesses}</span>
+                                <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
+                                ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+
+                dayDiv.innerHTML = `
+                    <div class="day-header">
+                        <span class="day-date">${formatDate(date)}</span>
+                        ${winner ? `<span class="day-winner">👑 ${winner}</span>` : ''}
+                    </div>
+                    <div class="day-scores">
+                        ${scoresHTML}
+                    </div>
+                `;
+
+                container.appendChild(dayDiv);
+            });
+        }
+
+        // Show Message
+        function showMessage(text, type) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 4000);
+        }
+
+        // Helper Functions
+        function getToday() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function getPlayers() {
+            return JSON.parse(localStorage.getItem('players') || '{}');
+        }
+
+        function savePlayers(players) {
+            localStorage.setItem('players', JSON.stringify(players));
+        }
+
+        function getDailyScores() {
+            return JSON.parse(localStorage.getItem('dailyScores') || '{}');
+        }
+
+        function saveDailyScores(scores) {
+            localStorage.setItem('dailyScores', JSON.stringify(scores));
+        }
+    </script>
+</body>
+</html>
