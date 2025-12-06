@@ -51,21 +51,8 @@
             width: 100%;
         }
 
-        /* Login Section */
-        .login-section {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .login-section h2 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: #1a1a1b;
-        }
-
         /* Input Styles */
         input[type="text"],
-        input[type="number"],
         textarea {
             width: 100%;
             padding: 14px;
@@ -78,7 +65,6 @@
         }
 
         input[type="text"]:focus,
-        input[type="number"]:focus,
         textarea:focus {
             outline: none;
             border-color: #787c7e;
@@ -86,8 +72,8 @@
 
         textarea {
             resize: vertical;
-            min-height: 120px;
-            font-size: 20px;
+            min-height: 150px;
+            font-size: 18px;
             line-height: 1.4;
         }
 
@@ -107,55 +93,20 @@
             margin-top: 8px;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background-color: #5a9a54;
         }
 
-        button:active {
+        button:active:not(:disabled) {
             transform: scale(0.98);
         }
 
-        button.secondary {
-            background-color: #787c7e;
-            margin-top: 8px;
+        button:disabled {
+            background-color: #d3d6da;
+            cursor: not-allowed;
         }
 
-        button.secondary:hover {
-            background-color: #6a6d70;
-        }
-
-        /* Score Entry Section */
-        .score-entry {
-            display: none;
-        }
-
-        .score-entry.active {
-            display: block;
-        }
-
-        .user-info {
-            background-color: #f6f7f8;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-name {
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .logout-btn {
-            background-color: #787c7e;
-            padding: 8px 16px;
-            font-size: 14px;
-            width: auto;
-            margin: 0;
-        }
-
+        /* Form */
         .form-group {
             margin-bottom: 20px;
         }
@@ -165,44 +116,6 @@
             font-weight: 600;
             margin-bottom: 8px;
             color: #1a1a1b;
-        }
-
-        .guess-options {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .guess-btn {
-            padding: 16px;
-            background-color: #ffffff;
-            border: 2px solid #d3d6da;
-            color: #1a1a1b;
-            font-weight: 700;
-            font-size: 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            margin: 0;
-        }
-
-        .guess-btn:hover {
-            border-color: #787c7e;
-            background-color: #f6f7f8;
-        }
-
-        .guess-btn.selected {
-            background-color: #6aaa64;
-            border-color: #6aaa64;
-            color: white;
-        }
-
-        .guess-btn.failed {
-            background-color: #787c7e;
-            border-color: #787c7e;
-            color: white;
         }
 
         /* Leaderboard */
@@ -382,239 +295,169 @@
             .container {
                 padding: 12px;
             }
-
-            .guess-options {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 6px;
-            }
-
-            .guess-btn {
-                padding: 12px 8px;
-                font-size: 16px;
-            }
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>WORDLE TRACKER</h1>
-        <div class="subtitle">Track daily scores with friends</div>
+        <div class="subtitle">Track daily scores with everyone</div>
     </header>
 
     <div class="container">
-        <!-- Login Section -->
-        <div class="login-section" id="loginSection">
-            <h2>Enter Your Name</h2>
-            <input type="text" id="playerNameInput" placeholder="Your name" autocomplete="off">
-            <button onclick="login()">Continue</button>
+        <div id="messageContainer"></div>
+
+        <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="playerNameInput" placeholder="Enter your name" autocomplete="off">
+            <div class="help-text">This will be used to identify you on the leaderboard</div>
         </div>
 
-        <!-- Score Entry Section -->
-        <div class="score-entry" id="scoreEntry">
-            <div class="user-info">
-                <span class="user-name" id="currentUser"></span>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
+        <div class="form-group">
+            <label>Paste Your Wordle Result</label>
+            <textarea id="gridInput" placeholder="Paste your entire Wordle result here...
 
-            <div id="messageContainer"></div>
+Wordle 1,234 3/6
 
-            <div class="form-group">
-                <label>Today's Wordle Result</label>
-                <div class="guess-options">
-                    <button class="guess-btn" onclick="selectGuess(1)">1</button>
-                    <button class="guess-btn" onclick="selectGuess(2)">2</button>
-                    <button class="guess-btn" onclick="selectGuess(3)">3</button>
-                    <button class="guess-btn" onclick="selectGuess(4)">4</button>
-                    <button class="guess-btn" onclick="selectGuess(5)">5</button>
-                    <button class="guess-btn" onclick="selectGuess(6)">6</button>
-                    <button class="guess-btn failed" onclick="selectGuess('X')">X</button>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Paste Your Wordle Grid</label>
-                <textarea id="gridInput" placeholder="Paste your Wordle emoji grid here...
 ⬜🟨⬜⬜⬜
 ⬜🟩⬜🟩⬜
 🟩🟩🟩🟩🟩"></textarea>
-                <div class="help-text">Include the colored squares (⬜🟨🟩) from your Wordle result</div>
-            </div>
+            <div class="help-text">Paste the entire Wordle share text including the emoji grid</div>
+        </div>
 
-            <button onclick="submitScore()">Submit Score</button>
+        <button onclick="submitScore()" id="submitBtn">Submit Score</button>
 
-            <!-- Leaderboard -->
-            <div class="leaderboard">
-                <h2>🏆 All-Time Leaderboard</h2>
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th class="rank">#</th>
-                            <th>Player</th>
-                            <th class="wins">Wins</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                    </tbody>
-                </table>
-            </div>
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h2>🏆 All-Time Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th class="rank">#</th>
+                        <th>Player</th>
+                        <th class="wins">Wins</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                </tbody>
+            </table>
+        </div>
 
-            <!-- Daily Results -->
-            <div class="daily-results">
-                <h2>📅 Recent Results</h2>
-                <div id="dailyResultsContainer"></div>
-            </div>
+        <!-- Daily Results -->
+        <div class="daily-results">
+            <h2>📅 Recent Results</h2>
+            <div id="dailyResultsContainer"></div>
         </div>
     </div>
 
     <script>
-        // Data Management
-        let currentPlayer = null;
-        let selectedGuessCount = null;
-
-        // Initialize
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            const savedPlayer = localStorage.getItem('currentPlayer');
-            if (savedPlayer) {
-                currentPlayer = savedPlayer;
-                showScoreEntry();
+            updateLeaderboard();
+            updateDailyResults();
+
+            // Load saved name if exists
+            const savedName = localStorage.getItem('savedPlayerName');
+            if (savedName) {
+                document.getElementById('playerNameInput').value = savedName;
             }
         });
 
-        // Login
-        function login() {
-            const nameInput = document.getElementById('playerNameInput');
-            const name = nameInput.value.trim();
+        // Parse Wordle Grid and extract all information
+        function parseWordleResult(text) {
+            const lines = text.trim().split('\n');
 
-            if (!name) {
-                showMessage('Please enter your name', 'error');
-                return;
+            // Look for the Wordle header line (e.g., "Wordle 1,234 3/6")
+            let guessCount = null;
+            let wordleNumber = null;
+
+            for (let line of lines) {
+                // Match patterns like "Wordle 1,234 3/6" or "Wordle 1234 X/6"
+                const match = line.match(/wordle\s+[\d,]+\s+([X\d])\/6/i);
+                if (match) {
+                    guessCount = match[1];
+                    break;
+                }
             }
 
-            currentPlayer = name;
-            localStorage.setItem('currentPlayer', name);
+            // Extract emoji grid lines
+            const emojiPattern = /[⬜⬛🟨🟩]+/;
+            const gridLines = lines.filter(line => emojiPattern.test(line));
 
-            // Initialize player if new
-            const players = getPlayers();
-            if (!players[name]) {
-                players[name] = { totalWins: 0 };
-                savePlayers(players);
+            // If we couldn't find guess count in header, count grid rows
+            if (!guessCount && gridLines.length > 0) {
+                guessCount = gridLines.length.toString();
             }
 
-            showScoreEntry();
-        }
-
-        // Logout
-        function logout() {
-            localStorage.removeItem('currentPlayer');
-            currentPlayer = null;
-            selectedGuessCount = null;
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('scoreEntry').classList.remove('active');
-            document.getElementById('playerNameInput').value = '';
-        }
-
-        // Show Score Entry
-        function showScoreEntry() {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('scoreEntry').classList.add('active');
-            document.getElementById('currentUser').textContent = currentPlayer;
-            updateLeaderboard();
-            updateDailyResults();
-            checkTodaySubmission();
-        }
-
-        // Check if player already submitted today
-        function checkTodaySubmission() {
-            const today = getToday();
-            const dailyScores = getDailyScores();
-
-            if (dailyScores[today] && dailyScores[today][currentPlayer]) {
-                showMessage('You already submitted your score for today!', 'success');
-                disableSubmission();
-            } else {
-                enableSubmission();
-            }
-        }
-
-        function disableSubmission() {
-            document.getElementById('gridInput').disabled = true;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = true);
-            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Already Submitted Today';
-            submitBtn.style.backgroundColor = '#d3d6da';
-        }
-
-        function enableSubmission() {
-            document.getElementById('gridInput').disabled = false;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = false);
-            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Score';
-            submitBtn.style.backgroundColor = '#6aaa64';
-        }
-
-        // Select Guess Count
-        function selectGuess(count) {
-            selectedGuessCount = count;
-            document.querySelectorAll('.guess-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-        }
-
-        // Parse Emoji Grid
-        function parseGrid(gridText) {
+            // Count green and yellow tiles
+            const fullGrid = gridLines.join('');
             const green = '🟩';
             const yellow = '🟨';
 
             let greenCount = 0;
             let yellowCount = 0;
 
-            for (let char of gridText) {
+            for (let char of fullGrid) {
                 if (char === green) greenCount++;
                 if (char === yellow) yellowCount++;
             }
 
             return {
+                guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
-                tileScore: greenCount * 1 + yellowCount * 0.5
+                tileScore: greenCount * 1 + yellowCount * 0.5,
+                grid: gridLines.join('\n'),
+                valid: gridLines.length > 0
             };
         }
 
         // Submit Score
         function submitScore() {
-            if (!selectedGuessCount) {
-                showMessage('Please select your guess count', 'error');
-                return;
-            }
-
+            const name = document.getElementById('playerNameInput').value.trim();
             const gridText = document.getElementById('gridInput').value.trim();
-            if (!gridText) {
-                showMessage('Please paste your Wordle grid', 'error');
+
+            if (!name) {
+                showMessage('Please enter your name', 'error');
                 return;
             }
 
-            const gridData = parseGrid(gridText);
+            if (!gridText) {
+                showMessage('Please paste your Wordle result', 'error');
+                return;
+            }
+
+            // Parse the Wordle result
+            const result = parseWordleResult(gridText);
+
+            if (!result.valid) {
+                showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
+                return;
+            }
+
             const today = getToday();
 
-            // Save daily score
+            // Check if this player already submitted today
             const dailyScores = getDailyScores();
+            if (dailyScores[today] && dailyScores[today][name]) {
+                showMessage('You already submitted a score for today!', 'error');
+                return;
+            }
+
+            // Save player name for next time
+            localStorage.setItem('savedPlayerName', name);
+
+            // Save daily score
             if (!dailyScores[today]) {
                 dailyScores[today] = {};
             }
 
-            dailyScores[today][currentPlayer] = {
-                guesses: selectedGuessCount,
-                green: gridData.green,
-                yellow: gridData.yellow,
-                tileScore: gridData.tileScore,
-                grid: gridText
+            dailyScores[today][name] = {
+                guesses: result.guesses,
+                green: result.green,
+                yellow: result.yellow,
+                tileScore: result.tileScore,
+                grid: result.grid
             };
 
             saveDailyScores(dailyScores);
@@ -623,16 +466,11 @@
             calculateDailyWinner(today);
 
             // Clear form
-            selectedGuessCount = null;
             document.getElementById('gridInput').value = '';
-            document.querySelectorAll('.guess-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
 
-            showMessage('Score submitted successfully!', 'success');
+            showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
             updateLeaderboard();
             updateDailyResults();
-            disableSubmission();
         }
 
         // Calculate Daily Winner
@@ -675,11 +513,8 @@
             // Update player's total wins
             if (winner) {
                 const players = getPlayers();
-                if (!players[winner]) {
-                    players[winner] = { totalWins: 0 };
-                }
 
-                // Recalculate total wins
+                // Recalculate total wins for all players
                 const allWins = {};
                 for (let date in dailyScores) {
                     const dayWinner = dailyScores[date]._winner;
@@ -688,12 +523,23 @@
                     }
                 }
 
-                // Update all players' win counts
-                for (let player in players) {
-                    players[player].totalWins = allWins[player] || 0;
+                // Get all unique player names from daily scores
+                const allPlayers = new Set();
+                for (let date in dailyScores) {
+                    for (let player in dailyScores[date]) {
+                        if (!player.startsWith('_')) {
+                            allPlayers.add(player);
+                        }
+                    }
                 }
 
-                savePlayers(players);
+                // Update all players' win counts
+                const updatedPlayers = {};
+                allPlayers.forEach(player => {
+                    updatedPlayers[player] = { totalWins: allWins[player] || 0 };
+                });
+
+                savePlayers(updatedPlayers);
             }
         }
 
@@ -706,6 +552,13 @@
             const sortedPlayers = Object.entries(players).sort((a, b) => b[1].totalWins - a[1].totalWins);
 
             tbody.innerHTML = '';
+
+            if (sortedPlayers.length === 0) {
+                const row = tbody.insertRow();
+                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 20px; color: #787c7e;">No scores yet. Be the first to submit!</td>';
+                return;
+            }
+
             sortedPlayers.forEach(([name, data], index) => {
                 const row = tbody.insertRow();
                 if (index === 0 && data.totalWins > 0) {
@@ -727,6 +580,11 @@
 
             // Sort dates descending
             const dates = Object.keys(dailyScores).sort().reverse();
+
+            if (dates.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
+                return;
+            }
 
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
@@ -756,7 +614,7 @@
                         <div class="player-score ${isWinner ? 'winner' : ''}">
                             <span class="name">${name}</span>
                             <span class="score">
-                                <span class="guesses">${score.guesses}</span>
+                                <span class="guesses">${score.guesses}/6</span>
                                 <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
                                 ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
                             </span>
@@ -803,19 +661,19 @@
         }
 
         function getPlayers() {
-            return JSON.parse(localStorage.getItem('players') || '{}');
+            return JSON.parse(localStorage.getItem('wordlePlayers') || '{}');
         }
 
         function savePlayers(players) {
-            localStorage.setItem('players', JSON.stringify(players));
+            localStorage.setItem('wordlePlayers', JSON.stringify(players));
         }
 
         function getDailyScores() {
-            return JSON.parse(localStorage.getItem('dailyScores') || '{}');
+            return JSON.parse(localStorage.getItem('wordleDailyScores') || '{}');
         }
 
         function saveDailyScores(scores) {
-            localStorage.setItem('dailyScores', JSON.stringify(scores));
+            localStorage.setItem('wordleDailyScores', JSON.stringify(scores));
         }
     </script>
 </body>
