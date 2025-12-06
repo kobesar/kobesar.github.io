@@ -51,22 +51,40 @@
             width: 100%;
         }
 
-        /* Login Section */
-        .login-section {
-            text-align: center;
-            padding: 40px 20px;
+        /* Section Visibility */
+        .section {
+            display: none;
         }
 
-        .login-section h2 {
+        .section.active {
+            display: block;
+        }
+
+        /* Common Styles */
+        .card {
+            background-color: #f6f7f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
             font-size: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            color: #1a1a1b;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
             color: #1a1a1b;
         }
 
         /* Input Styles */
         input[type="text"],
         input[type="number"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
             padding: 14px;
             font-size: 16px;
@@ -79,7 +97,8 @@
 
         input[type="text"]:focus,
         input[type="number"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: #787c7e;
         }
@@ -89,6 +108,13 @@
             min-height: 120px;
             font-size: 20px;
             line-height: 1.4;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1b;
         }
 
         /* Button Styles */
@@ -107,7 +133,7 @@
             margin-top: 8px;
         }
 
-        button:hover {
+        button:hover:not(:disabled) {
             background-color: #5a9a54;
         }
 
@@ -115,58 +141,134 @@
             transform: scale(0.98);
         }
 
-        button.secondary {
-            background-color: #787c7e;
-            margin-top: 8px;
+        button:disabled {
+            background-color: #d3d6da;
+            cursor: not-allowed;
         }
 
-        button.secondary:hover {
+        button.secondary {
+            background-color: #787c7e;
+        }
+
+        button.secondary:hover:not(:disabled) {
             background-color: #6a6d70;
         }
 
-        /* Score Entry Section */
-        .score-entry {
-            display: none;
-        }
-
-        .score-entry.active {
-            display: block;
-        }
-
-        .user-info {
-            background-color: #f6f7f8;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-name {
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .logout-btn {
-            background-color: #787c7e;
+        button.small {
             padding: 8px 16px;
             font-size: 14px;
             width: auto;
             margin: 0;
         }
 
-        .form-group {
+        /* Room Selection */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #1a1a1b;
+        .mode-card {
+            background-color: white;
+            border: 2px solid #d3d6da;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
+        .mode-card:hover {
+            border-color: #6aaa64;
+            background-color: #f6f7f8;
+        }
+
+        .mode-card.selected {
+            border-color: #6aaa64;
+            background-color: #e8f5e7;
+        }
+
+        .mode-card .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .mode-card .title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .mode-card .description {
+            font-size: 12px;
+            color: #787c7e;
+        }
+
+        /* Room Info */
+        .room-info {
+            background-color: #f6f7f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .room-name {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .room-code {
+            font-family: 'Courier New', monospace;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #d3d6da;
+            font-size: 16px;
+            font-weight: 700;
+            color: #6aaa64;
+        }
+
+        .room-mode {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* Players List */
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .player-tag {
+            background-color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            border: 1px solid #d3d6da;
+        }
+
+        .player-tag.current {
+            border-color: #6aaa64;
+            background-color: #e8f5e7;
+            font-weight: 600;
+        }
+
+        /* Guess Options */
         .guess-options {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -188,7 +290,7 @@
             margin: 0;
         }
 
-        .guess-btn:hover {
+        .guess-btn:hover:not(:disabled) {
             border-color: #787c7e;
             background-color: #f6f7f8;
         }
@@ -206,16 +308,6 @@
         }
 
         /* Leaderboard */
-        .leaderboard {
-            margin-top: 30px;
-        }
-
-        .leaderboard h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
         .leaderboard-table {
             width: 100%;
             border-collapse: separate;
@@ -223,6 +315,7 @@
             border: 1px solid #d3d6da;
             border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
         .leaderboard-table th,
@@ -259,16 +352,6 @@
         }
 
         /* Daily Results */
-        .daily-results {
-            margin-top: 30px;
-        }
-
-        .daily-results h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
         .day-result {
             border: 1px solid #d3d6da;
             border-radius: 8px;
@@ -344,14 +427,6 @@
             margin-left: 4px;
         }
 
-        /* Help Text */
-        .help-text {
-            font-size: 13px;
-            color: #787c7e;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
         /* Message */
         .message {
             padding: 12px;
@@ -373,6 +448,27 @@
             border: 1px solid #f5c6cb;
         }
 
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Help Text */
+        .help-text {
+            font-size: 13px;
+            color: #787c7e;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #787c7e;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             h1 {
@@ -383,8 +479,11 @@
                 padding: 12px;
             }
 
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+
             .guess-options {
-                grid-template-columns: repeat(4, 1fr);
                 gap: 6px;
             }
 
@@ -392,10 +491,6 @@
                 padding: 12px 8px;
                 font-size: 16px;
             }
-        }
-
-        .hidden {
-            display: none;
         }
     </style>
 </head>
@@ -406,24 +501,75 @@
     </header>
 
     <div class="container">
-        <!-- Login Section -->
-        <div class="login-section" id="loginSection">
-            <h2>Enter Your Name</h2>
-            <input type="text" id="playerNameInput" placeholder="Your name" autocomplete="off">
-            <button onclick="login()">Continue</button>
+        <div id="messageContainer"></div>
+
+        <!-- Setup Section -->
+        <div class="section active" id="setupSection">
+            <div style="text-align: center; padding: 40px 20px;">
+                <h2>Welcome to Wordle Tracker</h2>
+                <label>Your Name</label>
+                <input type="text" id="playerNameInput" placeholder="Enter your name" autocomplete="off">
+                <button onclick="setPlayerName()">Continue</button>
+            </div>
         </div>
 
-        <!-- Score Entry Section -->
-        <div class="score-entry" id="scoreEntry">
-            <div class="user-info">
-                <span class="user-name" id="currentUser"></span>
-                <button class="logout-btn" onclick="logout()">Logout</button>
+        <!-- Room Selection Section -->
+        <div class="section" id="roomSelectionSection">
+            <h2>Choose Game Mode</h2>
+
+            <div class="mode-selector">
+                <div class="mode-card" onclick="selectMode('1v1')">
+                    <div class="icon">⚔️</div>
+                    <div class="title">1v1 Battle</div>
+                    <div class="description">Challenge one friend</div>
+                </div>
+                <div class="mode-card" onclick="selectMode('group')">
+                    <div class="icon">👥</div>
+                    <div class="title">Group Play</div>
+                    <div class="description">Play with multiple friends</div>
+                </div>
             </div>
 
-            <div id="messageContainer"></div>
+            <div id="modeOptions" style="display: none;">
+                <h3>Create or Join Room</h3>
+                <button onclick="createRoom()">Create New Room</button>
+                <button class="secondary" onclick="showJoinRoom()">Join Existing Room</button>
 
-            <div class="form-group">
-                <label>Today's Wordle Result</label>
+                <div id="joinRoomForm" style="display: none; margin-top: 16px;">
+                    <label>Room Code</label>
+                    <input type="text" id="roomCodeInput" placeholder="Enter room code" style="text-transform: uppercase;">
+                    <button onclick="joinRoom()">Join Room</button>
+                    <button class="secondary" onclick="hideJoinRoom()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Section -->
+        <div class="section" id="gameSection">
+            <!-- Room Info -->
+            <div class="room-info">
+                <div class="room-header">
+                    <div>
+                        <div class="room-name" id="roomName"></div>
+                        <span class="room-mode" id="roomModeDisplay"></span>
+                    </div>
+                    <button class="secondary small" onclick="leaveRoom()">Leave</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; color: #787c7e;">Room Code:</span>
+                    <span class="room-code" id="roomCodeDisplay"></span>
+                </div>
+                <div style="margin-top: 12px;">
+                    <div style="font-size: 12px; color: #787c7e; margin-bottom: 4px;">Players:</div>
+                    <div class="players-list" id="playersList"></div>
+                </div>
+            </div>
+
+            <!-- Score Entry Form -->
+            <div class="card">
+                <h3>Submit Today's Score</h3>
+
+                <label>Guess Count</label>
                 <div class="guess-options">
                     <button class="guess-btn" onclick="selectGuess(1)">1</button>
                     <button class="guess-btn" onclick="selectGuess(2)">2</button>
@@ -433,22 +579,20 @@
                     <button class="guess-btn" onclick="selectGuess(6)">6</button>
                     <button class="guess-btn failed" onclick="selectGuess('X')">X</button>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>Paste Your Wordle Grid</label>
+                <label>Wordle Grid</label>
                 <textarea id="gridInput" placeholder="Paste your Wordle emoji grid here...
 ⬜🟨⬜⬜⬜
 ⬜🟩⬜🟩⬜
 🟩🟩🟩🟩🟩"></textarea>
                 <div class="help-text">Include the colored squares (⬜🟨🟩) from your Wordle result</div>
+
+                <button id="submitBtn" onclick="submitScore()">Submit Score</button>
             </div>
 
-            <button onclick="submitScore()">Submit Score</button>
-
             <!-- Leaderboard -->
-            <div class="leaderboard">
-                <h2>🏆 All-Time Leaderboard</h2>
+            <div style="margin-top: 30px;">
+                <h2 style="text-align: center;">🏆 Leaderboard</h2>
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
@@ -463,115 +607,268 @@
             </div>
 
             <!-- Daily Results -->
-            <div class="daily-results">
-                <h2>📅 Recent Results</h2>
+            <div style="margin-top: 30px;">
+                <h2 style="text-align: center;">📅 Recent Results</h2>
                 <div id="dailyResultsContainer"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Data Management
-        let currentPlayer = null;
-        let selectedGuessCount = null;
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, updateDoc, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedPlayer = localStorage.getItem('currentPlayer');
-            if (savedPlayer) {
-                currentPlayer = savedPlayer;
-                showScoreEntry();
+        // Firebase configuration - REPLACE WITH YOUR CONFIG
+        const firebaseConfig = {
+          apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
+          authDomain: "wordle-bud.firebaseapp.com",
+          projectId: "wordle-bud",
+          storageBucket: "wordle-bud.firebasestorage.app",
+          messagingSenderId: "3991484624",
+          appId: "1:3991484624:web:dcefe2846c3e5aad8c06d5",
+          measurementId: "G-QZSSYLP05D"
+        };
+
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            showMessage('Please configure Firebase settings in the code', 'error');
+        }
+
+        // Global state
+        window.currentPlayer = localStorage.getItem('playerName') || null;
+        window.currentRoom = localStorage.getItem('currentRoom') || null;
+        window.selectedMode = null;
+        window.selectedGuessCount = null;
+        window.roomData = null;
+        window.unsubscribeRoom = null;
+
+        // Make Firebase functions available globally
+        window.db = db;
+        window.firestoreFunctions = { doc, setDoc, getDoc, getDocs, onSnapshot, updateDoc, collection, query, orderBy, limit };
+
+        // Initialize app
+        if (window.currentPlayer) {
+            if (window.currentRoom) {
+                loadRoom(window.currentRoom);
+            } else {
+                showSection('roomSelectionSection');
             }
-        });
+        }
+    </script>
 
-        // Login
-        function login() {
-            const nameInput = document.getElementById('playerNameInput');
-            const name = nameInput.value.trim();
+    <script>
+        // UI Management
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
 
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        // Player Name Setup
+        function setPlayerName() {
+            const name = document.getElementById('playerNameInput').value.trim();
             if (!name) {
                 showMessage('Please enter your name', 'error');
                 return;
             }
+            window.currentPlayer = name;
+            localStorage.setItem('playerName', name);
+            showSection('roomSelectionSection');
+        }
 
-            currentPlayer = name;
-            localStorage.setItem('currentPlayer', name);
+        // Mode Selection
+        function selectMode(mode) {
+            window.selectedMode = mode;
+            document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.mode-card').classList.add('selected');
+            document.getElementById('modeOptions').style.display = 'block';
+        }
 
-            // Initialize player if new
-            const players = getPlayers();
-            if (!players[name]) {
-                players[name] = { totalWins: 0 };
-                savePlayers(players);
+        // Room Management
+        function generateRoomCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        async function createRoom() {
+            if (!window.selectedMode) {
+                showMessage('Please select a game mode first', 'error');
+                return;
             }
 
-            showScoreEntry();
+            const roomCode = generateRoomCode();
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
+
+            const roomData = {
+                code: roomCode,
+                mode: window.selectedMode,
+                createdBy: window.currentPlayer,
+                createdAt: new Date().toISOString(),
+                players: {
+                    [window.currentPlayer]: {
+                        name: window.currentPlayer,
+                        totalWins: 0,
+                        joinedAt: new Date().toISOString()
+                    }
+                },
+                dailyScores: {}
+            };
+
+            try {
+                await window.firestoreFunctions.setDoc(roomRef, roomData);
+                window.currentRoom = roomCode;
+                localStorage.setItem('currentRoom', roomCode);
+                loadRoom(roomCode);
+                showMessage('Room created successfully!', 'success');
+            } catch (error) {
+                console.error('Error creating room:', error);
+                showMessage('Failed to create room. Please check Firebase configuration.', 'error');
+            }
         }
 
-        // Logout
-        function logout() {
-            localStorage.removeItem('currentPlayer');
-            currentPlayer = null;
-            selectedGuessCount = null;
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('scoreEntry').classList.remove('active');
-            document.getElementById('playerNameInput').value = '';
+        function showJoinRoom() {
+            document.getElementById('joinRoomForm').style.display = 'block';
         }
 
-        // Show Score Entry
-        function showScoreEntry() {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('scoreEntry').classList.add('active');
-            document.getElementById('currentUser').textContent = currentPlayer;
+        function hideJoinRoom() {
+            document.getElementById('joinRoomForm').style.display = 'none';
+            document.getElementById('roomCodeInput').value = '';
+        }
+
+        async function joinRoom() {
+            const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
+            if (!roomCode) {
+                showMessage('Please enter a room code', 'error');
+                return;
+            }
+
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
+
+            try {
+                const roomSnap = await window.firestoreFunctions.getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    showMessage('Room not found', 'error');
+                    return;
+                }
+
+                const roomData = roomSnap.data();
+
+                // Check if room is 1v1 and already has 2 players
+                if (roomData.mode === '1v1' && Object.keys(roomData.players || {}).length >= 2) {
+                    if (!roomData.players[window.currentPlayer]) {
+                        showMessage('This 1v1 room is full', 'error');
+                        return;
+                    }
+                }
+
+                // Add player to room if not already in
+                if (!roomData.players[window.currentPlayer]) {
+                    await window.firestoreFunctions.updateDoc(roomRef, {
+                        [`players.${window.currentPlayer}`]: {
+                            name: window.currentPlayer,
+                            totalWins: 0,
+                            joinedAt: new Date().toISOString()
+                        }
+                    });
+                }
+
+                window.currentRoom = roomCode;
+                localStorage.setItem('currentRoom', roomCode);
+                loadRoom(roomCode);
+                showMessage('Joined room successfully!', 'success');
+            } catch (error) {
+                console.error('Error joining room:', error);
+                showMessage('Failed to join room', 'error');
+            }
+        }
+
+        async function loadRoom(roomCode) {
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
+
+            // Unsubscribe from previous room if any
+            if (window.unsubscribeRoom) {
+                window.unsubscribeRoom();
+            }
+
+            // Listen to room updates in real-time
+            window.unsubscribeRoom = window.firestoreFunctions.onSnapshot(roomRef, (doc) => {
+                if (doc.exists()) {
+                    window.roomData = doc.data();
+                    updateGameUI();
+                    showSection('gameSection');
+                } else {
+                    showMessage('Room no longer exists', 'error');
+                    leaveRoom();
+                }
+            }, (error) => {
+                console.error('Error loading room:', error);
+                showMessage('Failed to load room', 'error');
+            });
+        }
+
+        function updateGameUI() {
+            const room = window.roomData;
+
+            // Update room info
+            document.getElementById('roomName').textContent = `${room.mode === '1v1' ? '⚔️ 1v1' : '👥 Group'} Battle`;
+            document.getElementById('roomModeDisplay').textContent = room.mode === '1v1' ? '1v1 Mode' : 'Group Mode';
+            document.getElementById('roomCodeDisplay').textContent = room.code;
+
+            // Update players list
+            const playersList = document.getElementById('playersList');
+            playersList.innerHTML = '';
+            for (let playerId in room.players) {
+                const player = room.players[playerId];
+                const tag = document.createElement('div');
+                tag.className = 'player-tag' + (playerId === window.currentPlayer ? ' current' : '');
+                tag.textContent = player.name;
+                playersList.appendChild(tag);
+            }
+
+            // Update leaderboard
             updateLeaderboard();
+
+            // Update daily results
             updateDailyResults();
+
+            // Check if player already submitted today
             checkTodaySubmission();
         }
 
-        // Check if player already submitted today
-        function checkTodaySubmission() {
-            const today = getToday();
-            const dailyScores = getDailyScores();
-
-            if (dailyScores[today] && dailyScores[today][currentPlayer]) {
-                showMessage('You already submitted your score for today!', 'success');
-                disableSubmission();
-            } else {
-                enableSubmission();
+        function leaveRoom() {
+            if (window.unsubscribeRoom) {
+                window.unsubscribeRoom();
             }
+            window.currentRoom = null;
+            window.roomData = null;
+            localStorage.removeItem('currentRoom');
+            showSection('roomSelectionSection');
         }
 
-        function disableSubmission() {
-            document.getElementById('gridInput').disabled = true;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = true);
-            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Already Submitted Today';
-            submitBtn.style.backgroundColor = '#d3d6da';
-        }
-
-        function enableSubmission() {
-            document.getElementById('gridInput').disabled = false;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = false);
-            const submitBtn = document.querySelector('button[onclick="submitScore()"]');
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Score';
-            submitBtn.style.backgroundColor = '#6aaa64';
-        }
-
-        // Select Guess Count
+        // Score Submission
         function selectGuess(count) {
-            selectedGuessCount = count;
+            window.selectedGuessCount = count;
             document.querySelectorAll('.guess-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
             event.target.classList.add('selected');
         }
 
-        // Parse Emoji Grid
         function parseGrid(gridText) {
             const green = '🟩';
             const yellow = '🟨';
-
             let greenCount = 0;
             let yellowCount = 0;
 
@@ -587,9 +884,8 @@
             };
         }
 
-        // Submit Score
-        function submitScore() {
-            if (!selectedGuessCount) {
+        async function submitScore() {
+            if (!window.selectedGuessCount) {
                 showMessage('Please select your guess count', 'error');
                 return;
             }
@@ -601,44 +897,40 @@
             }
 
             const gridData = parseGrid(gridText);
-            const today = getToday();
+            const today = new Date().toISOString().split('T')[0];
 
-            // Save daily score
-            const dailyScores = getDailyScores();
-            if (!dailyScores[today]) {
-                dailyScores[today] = {};
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', window.currentRoom);
+
+            try {
+                await window.firestoreFunctions.updateDoc(roomRef, {
+                    [`dailyScores.${today}.${window.currentPlayer}`]: {
+                        guesses: window.selectedGuessCount,
+                        green: gridData.green,
+                        yellow: gridData.yellow,
+                        tileScore: gridData.tileScore,
+                        grid: gridText,
+                        submittedAt: new Date().toISOString()
+                    }
+                });
+
+                // Calculate winner for today
+                await calculateDailyWinner(today);
+
+                // Clear form
+                window.selectedGuessCount = null;
+                document.getElementById('gridInput').value = '';
+                document.querySelectorAll('.guess-btn').forEach(btn => btn.classList.remove('selected'));
+
+                showMessage('Score submitted successfully!', 'success');
+            } catch (error) {
+                console.error('Error submitting score:', error);
+                showMessage('Failed to submit score', 'error');
             }
-
-            dailyScores[today][currentPlayer] = {
-                guesses: selectedGuessCount,
-                green: gridData.green,
-                yellow: gridData.yellow,
-                tileScore: gridData.tileScore,
-                grid: gridText
-            };
-
-            saveDailyScores(dailyScores);
-
-            // Calculate and update winner
-            calculateDailyWinner(today);
-
-            // Clear form
-            selectedGuessCount = null;
-            document.getElementById('gridInput').value = '';
-            document.querySelectorAll('.guess-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-
-            showMessage('Score submitted successfully!', 'success');
-            updateLeaderboard();
-            updateDailyResults();
-            disableSubmission();
         }
 
-        // Calculate Daily Winner
-        function calculateDailyWinner(date) {
-            const dailyScores = getDailyScores();
-            const dayScores = dailyScores[date];
+        async function calculateDailyWinner(date) {
+            const room = window.roomData;
+            const dayScores = room.dailyScores[date];
 
             if (!dayScores) return;
 
@@ -649,6 +941,8 @@
 
             // Find winner
             for (let player in dayScores) {
+                if (player.startsWith('_')) continue;
+
                 const score = dayScores[player];
                 const guesses = score.guesses === 'X' ? Infinity : parseInt(score.guesses);
 
@@ -658,7 +952,6 @@
                     bestTileScore = score.tileScore;
                     isTiebreaker = false;
                 } else if (guesses === bestGuesses && guesses !== Infinity) {
-                    // Tie - use tiebreaker
                     if (score.tileScore > bestTileScore) {
                         winner = player;
                         bestTileScore = score.tileScore;
@@ -667,80 +960,102 @@
                 }
             }
 
-            // Update winner in daily scores
-            dailyScores[date]._winner = winner;
-            dailyScores[date]._isTiebreaker = isTiebreaker;
-            saveDailyScores(dailyScores);
+            // Update winner in Firestore
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', window.currentRoom);
+            await window.firestoreFunctions.updateDoc(roomRef, {
+                [`dailyScores.${date}._winner`]: winner,
+                [`dailyScores.${date}._isTiebreaker`]: isTiebreaker
+            });
 
             // Update player's total wins
             if (winner) {
-                const players = getPlayers();
-                if (!players[winner]) {
-                    players[winner] = { totalWins: 0 };
-                }
-
-                // Recalculate total wins
+                // Recalculate all wins
                 const allWins = {};
-                for (let date in dailyScores) {
-                    const dayWinner = dailyScores[date]._winner;
+                for (let d in room.dailyScores) {
+                    const dayWinner = room.dailyScores[d]._winner;
                     if (dayWinner) {
                         allWins[dayWinner] = (allWins[dayWinner] || 0) + 1;
                     }
                 }
 
                 // Update all players' win counts
-                for (let player in players) {
-                    players[player].totalWins = allWins[player] || 0;
+                const updates = {};
+                for (let player in room.players) {
+                    updates[`players.${player}.totalWins`] = allWins[player] || 0;
                 }
 
-                savePlayers(players);
+                await window.firestoreFunctions.updateDoc(roomRef, updates);
             }
         }
 
-        // Update Leaderboard
+        function checkTodaySubmission() {
+            const today = new Date().toISOString().split('T')[0];
+            const room = window.roomData;
+
+            if (room.dailyScores[today] && room.dailyScores[today][window.currentPlayer]) {
+                disableSubmission();
+            } else {
+                enableSubmission();
+            }
+        }
+
+        function disableSubmission() {
+            document.getElementById('gridInput').disabled = true;
+            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = true);
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Already Submitted Today';
+        }
+
+        function enableSubmission() {
+            document.getElementById('gridInput').disabled = false;
+            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = false);
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Score';
+        }
+
+        // Display Functions
         function updateLeaderboard() {
-            const players = getPlayers();
+            const room = window.roomData;
             const tbody = document.getElementById('leaderboardBody');
 
-            // Sort by wins
-            const sortedPlayers = Object.entries(players).sort((a, b) => b[1].totalWins - a[1].totalWins);
+            const sortedPlayers = Object.entries(room.players).sort((a, b) =>
+                (b[1].totalWins || 0) - (a[1].totalWins || 0)
+            );
 
             tbody.innerHTML = '';
-            sortedPlayers.forEach(([name, data], index) => {
+            sortedPlayers.forEach(([playerId, player], index) => {
                 const row = tbody.insertRow();
-                if (index === 0 && data.totalWins > 0) {
+                if (index === 0 && player.totalWins > 0) {
                     row.classList.add('rank-1');
                 }
 
                 row.innerHTML = `
                     <td class="rank">${index + 1}</td>
-                    <td>${name}</td>
-                    <td class="wins">${data.totalWins}</td>
+                    <td>${player.name}</td>
+                    <td class="wins">${player.totalWins || 0}</td>
                 `;
             });
         }
 
-        // Update Daily Results
         function updateDailyResults() {
-            const dailyScores = getDailyScores();
+            const room = window.roomData;
             const container = document.getElementById('dailyResultsContainer');
 
-            // Sort dates descending
-            const dates = Object.keys(dailyScores).sort().reverse();
+            const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
-                const dayData = dailyScores[date];
+                const dayData = room.dailyScores[date];
                 const winner = dayData._winner;
                 const isTiebreaker = dayData._isTiebreaker;
 
-                // Sort players by score
                 const players = Object.entries(dayData)
                     .filter(([key]) => !key.startsWith('_'))
                     .sort((a, b) => {
                         const guessA = a[1].guesses === 'X' ? Infinity : parseInt(a[1].guesses);
                         const guessB = b[1].guesses === 'X' ? Infinity : parseInt(b[1].guesses);
-
                         if (guessA !== guessB) return guessA - guessB;
                         return b[1].tileScore - a[1].tileScore;
                     });
@@ -776,20 +1091,10 @@
 
                 container.appendChild(dayDiv);
             });
-        }
 
-        // Show Message
-        function showMessage(text, type) {
-            const container = document.getElementById('messageContainer');
-            container.innerHTML = `<div class="message ${type}">${text}</div>`;
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 4000);
-        }
-
-        // Helper Functions
-        function getToday() {
-            return new Date().toISOString().split('T')[0];
+            if (dates.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #787c7e; padding: 20px;">No scores yet. Be the first to submit!</div>';
+            }
         }
 
         function formatDate(dateStr) {
@@ -800,22 +1105,6 @@
                 day: 'numeric',
                 year: 'numeric'
             });
-        }
-
-        function getPlayers() {
-            return JSON.parse(localStorage.getItem('players') || '{}');
-        }
-
-        function savePlayers(players) {
-            localStorage.setItem('players', JSON.stringify(players));
-        }
-
-        function getDailyScores() {
-            return JSON.parse(localStorage.getItem('dailyScores') || '{}');
-        }
-
-        function saveDailyScores(scores) {
-            localStorage.setItem('dailyScores', JSON.stringify(scores));
         }
     </script>
 </body>
