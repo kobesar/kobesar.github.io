@@ -353,6 +353,7 @@ Wordle 1,234 3/6
             const lines = text.trim().split('\n');
             let guessCount = null;
 
+            // Look for Wordle header line (e.g., "Wordle 1,234 3/6" or "Wordle 1234 3/6")
             for (let line of lines) {
                 const match = line.match(/wordle\s+[\d,]+\s+([X\d])\/6/i);
                 if (match) {
@@ -361,26 +362,26 @@ Wordle 1,234 3/6
                 }
             }
 
+            // Find all lines with Wordle emoji squares
             const emojiPattern = /[⬜⬛🟨🟩]+/;
             const gridLines = lines.filter(line => emojiPattern.test(line));
 
+            // If no guess count found in header, count the grid lines
             if (!guessCount && gridLines.length > 0) {
                 guessCount = gridLines.length.toString();
             }
 
+            // Count green and yellow tiles for tiebreaker
             const fullGrid = gridLines.join('');
-            const green = '🟩';
-            const yellow = '🟨';
-
             let greenCount = 0;
             let yellowCount = 0;
 
             for (let char of fullGrid) {
-                if (char === green) greenCount++;
-                if (char === yellow) yellowCount++;
+                if (char === '🟩') greenCount++;
+                if (char === '🟨') yellowCount++;
             }
 
-            return {
+            const result = {
                 guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
@@ -388,11 +389,18 @@ Wordle 1,234 3/6
                 grid: gridLines.join('\n'),
                 valid: gridLines.length > 0
             };
+
+            console.log('parseWordleResult:', result);
+            return result;
         }
 
         function submitScore() {
+            console.log('submitScore called');
             const name = document.getElementById('playerNameInput').value.trim();
             const gridText = document.getElementById('gridInput').value.trim();
+
+            console.log('Name:', name);
+            console.log('Grid text:', gridText);
 
             if (!name) {
                 showMessage('Please enter your name', 'error');
@@ -405,6 +413,7 @@ Wordle 1,234 3/6
             }
 
             const result = parseWordleResult(gridText);
+            console.log('Parsed result:', result);
 
             if (!result.valid) {
                 showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
@@ -413,6 +422,9 @@ Wordle 1,234 3/6
 
             const today = getToday();
             const dailyScores = getDailyScores();
+
+            console.log('Today:', today);
+            console.log('Daily scores:', dailyScores);
 
             if (dailyScores[today] && dailyScores[today][name]) {
                 showMessage('You already submitted a score for today!', 'error');
@@ -441,6 +453,8 @@ Wordle 1,234 3/6
             showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
             updateLeaderboard();
             updateDailyResults();
+
+            console.log('Score submitted successfully');
         }
 
         function calculateDailyWinner(date) {
