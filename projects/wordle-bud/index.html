@@ -69,8 +69,8 @@
 
         textarea {
             resize: vertical;
-            min-height: 150px;
-            font-size: 18px;
+            min-height: 120px;
+            font-size: 20px;
             line-height: 1.4;
         }
 
@@ -93,7 +93,7 @@
             background-color: #5a9a54;
         }
 
-        button:active:not(:disabled) {
+        button:active {
             transform: scale(0.98);
         }
 
@@ -291,7 +291,7 @@
 <body>
     <header>
         <h1>WORDLE TRACKER</h1>
-        <div class="subtitle">Track daily scores with everyone</div>
+        <div class="subtitle">Track daily scores with friends</div>
     </header>
 
     <div class="container">
@@ -375,18 +375,15 @@ Wordle 1,234 3/6
             let greenCount = 0;
             let yellowCount = 0;
 
-            for (let char of fullGrid) {
+            for (let char of gridText) {
                 if (char === green) greenCount++;
                 if (char === yellow) yellowCount++;
             }
 
             return {
-                guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
-                tileScore: greenCount * 1 + yellowCount * 0.5,
-                grid: gridLines.join('\n'),
-                valid: gridLines.length > 0
+                tileScore: greenCount * 1 + yellowCount * 0.5
             };
         }
 
@@ -399,6 +396,7 @@ Wordle 1,234 3/6
                 return;
             }
 
+            const gridText = document.getElementById('gridInput').value.trim();
             if (!gridText) {
                 showMessage('Please paste your Wordle result', 'error');
                 return;
@@ -408,6 +406,7 @@ Wordle 1,234 3/6
 
             if (!result.valid) {
                 showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
+                showMessage('Please paste your Wordle grid', 'error');
                 return;
             }
 
@@ -535,11 +534,6 @@ Wordle 1,234 3/6
             const container = document.getElementById('dailyResultsContainer');
             const dates = Object.keys(dailyScores).sort().reverse();
 
-            if (dates.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
-                return;
-            }
-
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
                 const dayData = dailyScores[date];
@@ -567,7 +561,7 @@ Wordle 1,234 3/6
                         <div class="player-score ${isWinner ? 'winner' : ''}">
                             <span class="name">${name}</span>
                             <span class="score">
-                                <span class="guesses">${score.guesses}/6</span>
+                                <span class="guesses">${score.guesses}</span>
                                 <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
                                 ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
                             </span>
