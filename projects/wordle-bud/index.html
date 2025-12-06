@@ -105,8 +105,8 @@
 
         textarea {
             resize: vertical;
-            min-height: 120px;
-            font-size: 20px;
+            min-height: 150px;
+            font-size: 18px;
             line-height: 1.4;
         }
 
@@ -137,7 +137,7 @@
             background-color: #5a9a54;
         }
 
-        button:active {
+        button:active:not(:disabled) {
             transform: scale(0.98);
         }
 
@@ -497,7 +497,7 @@
 <body>
     <header>
         <h1>WORDLE TRACKER</h1>
-        <div class="subtitle">Track daily scores with friends</div>
+        <div class="subtitle">Track daily scores with everyone</div>
     </header>
 
     <div class="container">
@@ -872,15 +872,18 @@
             let greenCount = 0;
             let yellowCount = 0;
 
-            for (let char of gridText) {
+            for (let char of fullGrid) {
                 if (char === green) greenCount++;
                 if (char === yellow) yellowCount++;
             }
 
             return {
+                guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
-                tileScore: greenCount * 1 + yellowCount * 0.5
+                tileScore: greenCount * 1 + yellowCount * 0.5,
+                grid: gridLines.join('\n'),
+                valid: gridLines.length > 0
             };
         }
 
@@ -890,9 +893,16 @@
                 return;
             }
 
-            const gridText = document.getElementById('gridInput').value.trim();
             if (!gridText) {
-                showMessage('Please paste your Wordle grid', 'error');
+                showMessage('Please paste your Wordle result', 'error');
+                return;
+            }
+
+            // Parse the Wordle result
+            const result = parseWordleResult(gridText);
+
+            if (!result.valid) {
+                showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
                 return;
             }
 
@@ -1045,6 +1055,11 @@
 
             const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
+            if (dates.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
+                return;
+            }
+
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
                 const dayData = room.dailyScores[date];
@@ -1071,7 +1086,7 @@
                         <div class="player-score ${isWinner ? 'winner' : ''}">
                             <span class="name">${name}</span>
                             <span class="score">
-                                <span class="guesses">${score.guesses}</span>
+                                <span class="guesses">${score.guesses}/6</span>
                                 <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
                                 ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
                             </span>
