@@ -356,88 +356,9 @@ Wordle 1,234 3/6
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
-        // Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
-          authDomain: "wordle-bud.firebaseapp.com",
-          projectId: "wordle-bud",
-          storageBucket: "wordle-bud.firebasestorage.app",
-          messagingSenderId: "3991484624",
-          appId: "1:3991484624:web:dcefe2846c3e5aad8c06d5",
-          measurementId: "G-QZSSYLP05D"
-        };
-
-        // Initialize Firebase
-        let app, db;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            console.log('Firebase initialized successfully');
-        } catch (error) {
-            console.error('Firebase initialization error:', error);
-            showMessage('Failed to connect to server. Please refresh the page.', 'error');
-        }
-
-        // Global state
-        window.currentPlayer = localStorage.getItem('playerName') || null;
-        window.roomData = null;
-        window.unsubscribeRoom = null;
-
-        // Make Firebase functions available globally
-        window.db = db;
-        window.firestoreFunctions = { doc, setDoc, getDoc, onSnapshot, updateDoc };
-
-        // Initialize global room
-        initializeGlobalRoom();
-
-        async function initializeGlobalRoom() {
-            const ROOM_CODE = 'GLOBAL';
-            const roomRef = doc(db, 'rooms', ROOM_CODE);
-
-            try {
-                const roomSnap = await getDoc(roomRef);
-
-                if (!roomSnap.exists()) {
-                    // Create global room if it doesn't exist
-                    await setDoc(roomRef, {
-                        code: ROOM_CODE,
-                        createdAt: new Date().toISOString(),
-                        players: {},
-                        dailyScores: {}
-                    });
-                }
-
-                // Subscribe to room updates
-                window.unsubscribeRoom = onSnapshot(roomRef, (doc) => {
-                    window.roomData = doc.data();
-                    updateUI();
-                    checkTodaySubmission();
-                });
-
-                document.getElementById('loadingSection').style.display = 'none';
-                document.getElementById('mainSection').style.display = 'block';
-
-                // Load saved player name
-                if (window.currentPlayer) {
-                    document.getElementById('playerNameInput').value = window.currentPlayer;
-                }
-
-            } catch (error) {
-                console.error('Error initializing room:', error);
-                showMessage('Failed to connect to server. Please refresh the page.', 'error');
-            }
-        }
-
-        // Make functions globally available
-        window.initializeGlobalRoom = initializeGlobalRoom;
-    </script>
-
+    <!-- Core Functions -->
     <script>
+        // UI and utility functions
         function showMessage(text, type = 'info') {
             const container = document.getElementById('messageContainer');
             container.innerHTML = `<div class="message ${type}">${text}</div>`;
@@ -750,6 +671,87 @@ Wordle 1,234 3/6
                 year: 'numeric'
             });
         }
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
+          authDomain: "wordle-bud.firebaseapp.com",
+          projectId: "wordle-bud",
+          storageBucket: "wordle-bud.firebasestorage.app",
+          messagingSenderId: "3991484624",
+          appId: "1:3991484624:web:dcefe2846c3e5aad8c06d5",
+          measurementId: "G-QZSSYLP05D"
+        };
+
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            showMessage('Failed to connect to server. Please refresh the page.', 'error');
+        }
+
+        // Global state
+        window.currentPlayer = localStorage.getItem('playerName') || null;
+        window.roomData = null;
+        window.unsubscribeRoom = null;
+
+        // Make Firebase functions available globally
+        window.db = db;
+        window.firestoreFunctions = { doc, setDoc, getDoc, onSnapshot, updateDoc };
+
+        // Initialize global room
+        initializeGlobalRoom();
+
+        async function initializeGlobalRoom() {
+            const ROOM_CODE = 'GLOBAL';
+            const roomRef = doc(db, 'rooms', ROOM_CODE);
+
+            try {
+                const roomSnap = await getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    // Create global room if it doesn't exist
+                    await setDoc(roomRef, {
+                        code: ROOM_CODE,
+                        createdAt: new Date().toISOString(),
+                        players: {},
+                        dailyScores: {}
+                    });
+                }
+
+                // Subscribe to room updates
+                window.unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+                    window.roomData = doc.data();
+                    updateUI();
+                    checkTodaySubmission();
+                });
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+
+                // Load saved player name
+                if (window.currentPlayer) {
+                    document.getElementById('playerNameInput').value = window.currentPlayer;
+                }
+
+            } catch (error) {
+                console.error('Error initializing room:', error);
+                showMessage('Failed to connect to server. Please refresh the page.', 'error');
+            }
+        }
+
+        // Make functions globally available
+        window.initializeGlobalRoom = initializeGlobalRoom;
     </script>
 </body>
 </html>
