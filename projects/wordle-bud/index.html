@@ -585,6 +585,13 @@ Wordle 1,234 3/6
             const today = new Date().toISOString().split('T')[0];
             const room = window.roomData;
             const name = window.currentPlayer;
+            const lastCheckedDate = localStorage.getItem('lastCheckedDate');
+
+            // Clear the grid if it's a new day
+            if (lastCheckedDate && lastCheckedDate !== today) {
+                document.getElementById('gridInput').value = '';
+            }
+            localStorage.setItem('lastCheckedDate', today);
 
             if (name && room.dailyScores[today] && room.dailyScores[today][name]) {
                 disableSubmission();
