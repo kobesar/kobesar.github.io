@@ -277,6 +277,18 @@
             border: 1px solid #f5c6cb;
         }
 
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #787c7e;
+        }
+
         @media (max-width: 480px) {
             h1 {
                 font-size: 28px;
@@ -297,57 +309,140 @@
     <div class="container">
         <div id="messageContainer"></div>
 
-        <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="playerNameInput" placeholder="Enter your name" autocomplete="off">
-            <div class="help-text">This will be used to identify you on the leaderboard</div>
+        <div id="loadingSection" class="loading">
+            Connecting to server...
         </div>
 
-        <div class="form-group">
-            <label>Paste Your Wordle Result</label>
-            <textarea id="gridInput" placeholder="Paste your entire Wordle result here...
+        <div id="mainSection" style="display: none;">
+            <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="playerNameInput" placeholder="Enter your name" autocomplete="off">
+                <div class="help-text">This will be used to identify you on the leaderboard</div>
+            </div>
+
+            <div class="form-group">
+                <label>Paste Your Wordle Result</label>
+                <textarea id="gridInput" placeholder="Paste your entire Wordle result here...
 
 Wordle 1,234 3/6
 
 ⬜🟨⬜⬜⬜
 ⬜🟩⬜🟩⬜
 🟩🟩🟩🟩🟩"></textarea>
-            <div class="help-text">Paste the entire Wordle share text including the emoji grid</div>
-        </div>
+                <div class="help-text">Paste the entire Wordle share text including the emoji grid. We'll automatically detect your guess count!</div>
+            </div>
 
-        <button onclick="submitScore()" id="submitBtn">Submit Score</button>
+            <button onclick="submitScore()" id="submitBtn">Submit Score</button>
 
-        <div class="leaderboard">
-            <h2>🏆 All-Time Leaderboard</h2>
-            <table class="leaderboard-table">
-                <thead>
-                    <tr>
-                        <th class="rank">#</th>
-                        <th>Player</th>
-                        <th class="wins">Wins</th>
-                    </tr>
-                </thead>
-                <tbody id="leaderboardBody">
-                </tbody>
-            </table>
-        </div>
+            <div class="leaderboard">
+                <h2>🏆 All-Time Leaderboard</h2>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank">#</th>
+                            <th>Player</th>
+                            <th class="wins">Wins</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="daily-results">
-            <h2>📅 Recent Results</h2>
-            <div id="dailyResultsContainer"></div>
+            <div class="daily-results">
+                <h2>📅 Recent Results</h2>
+                <div id="dailyResultsContainer"></div>
+            </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            updateLeaderboard();
-            updateDailyResults();
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-            const savedName = localStorage.getItem('savedPlayerName');
-            if (savedName) {
-                document.getElementById('playerNameInput').value = savedName;
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
+          authDomain: "wordle-bud.firebaseapp.com",
+          projectId: "wordle-bud",
+          storageBucket: "wordle-bud.firebasestorage.app",
+          messagingSenderId: "3991484624",
+          appId: "1:3991484624:web:dcefe2846c3e5aad8c06d5",
+          measurementId: "G-QZSSYLP05D"
+        };
+
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            showMessage('Failed to connect to server. Please refresh the page.', 'error');
+        }
+
+        // Global state
+        window.currentPlayer = localStorage.getItem('playerName') || null;
+        window.roomData = null;
+        window.unsubscribeRoom = null;
+
+        // Make Firebase functions available globally
+        window.db = db;
+        window.firestoreFunctions = { doc, setDoc, getDoc, onSnapshot, updateDoc };
+
+        // Initialize global room
+        initializeGlobalRoom();
+
+        async function initializeGlobalRoom() {
+            const ROOM_CODE = 'GLOBAL';
+            const roomRef = doc(db, 'rooms', ROOM_CODE);
+
+            try {
+                const roomSnap = await getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    // Create global room if it doesn't exist
+                    await setDoc(roomRef, {
+                        code: ROOM_CODE,
+                        createdAt: new Date().toISOString(),
+                        players: {},
+                        dailyScores: {}
+                    });
+                }
+
+                // Subscribe to room updates
+                window.unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+                    window.roomData = doc.data();
+                    updateUI();
+                    checkTodaySubmission();
+                });
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+
+                // Load saved player name
+                if (window.currentPlayer) {
+                    document.getElementById('playerNameInput').value = window.currentPlayer;
+                }
+
+            } catch (error) {
+                console.error('Error initializing room:', error);
+                showMessage('Failed to connect to server. Please refresh the page.', 'error');
             }
-        });
+        }
+
+        // Make functions globally available
+        window.initializeGlobalRoom = initializeGlobalRoom;
+    </script>
+
+    <script>
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
 
         function parseWordleResult(text) {
             const lines = text.trim().split('\n');
@@ -381,7 +476,7 @@ Wordle 1,234 3/6
                 if (char === '🟨') yellowCount++;
             }
 
-            const result = {
+            return {
                 guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
@@ -389,18 +484,11 @@ Wordle 1,234 3/6
                 grid: gridLines.join('\n'),
                 valid: gridLines.length > 0
             };
-
-            console.log('parseWordleResult:', result);
-            return result;
         }
 
-        function submitScore() {
-            console.log('submitScore called');
+        async function submitScore() {
             const name = document.getElementById('playerNameInput').value.trim();
             const gridText = document.getElementById('gridInput').value.trim();
-
-            console.log('Name:', name);
-            console.log('Grid text:', gridText);
 
             if (!name) {
                 showMessage('Please enter your name', 'error');
@@ -413,53 +501,66 @@ Wordle 1,234 3/6
             }
 
             const result = parseWordleResult(gridText);
-            console.log('Parsed result:', result);
 
             if (!result.valid) {
                 showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
                 return;
             }
 
-            const today = getToday();
-            const dailyScores = getDailyScores();
+            const today = new Date().toISOString().split('T')[0];
 
-            console.log('Today:', today);
-            console.log('Daily scores:', dailyScores);
-
-            if (dailyScores[today] && dailyScores[today][name]) {
+            // Check if already submitted
+            if (window.roomData.dailyScores[today] && window.roomData.dailyScores[today][name]) {
                 showMessage('You already submitted a score for today!', 'error');
                 return;
             }
 
-            localStorage.setItem('savedPlayerName', name);
+            // Save player name
+            window.currentPlayer = name;
+            localStorage.setItem('playerName', name);
 
-            if (!dailyScores[today]) {
-                dailyScores[today] = {};
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', 'GLOBAL');
+
+            try {
+                // Add player to room if not exists
+                if (!window.roomData.players[name]) {
+                    await window.firestoreFunctions.updateDoc(roomRef, {
+                        [`players.${name}`]: {
+                            name: name,
+                            totalWins: 0,
+                            joinedAt: new Date().toISOString()
+                        }
+                    });
+                }
+
+                // Submit score
+                await window.firestoreFunctions.updateDoc(roomRef, {
+                    [`dailyScores.${today}.${name}`]: {
+                        guesses: result.guesses,
+                        green: result.green,
+                        yellow: result.yellow,
+                        tileScore: result.tileScore,
+                        grid: result.grid,
+                        submittedAt: new Date().toISOString()
+                    }
+                });
+
+                // Calculate winner for today
+                await calculateDailyWinner(today);
+
+                // Clear form
+                document.getElementById('gridInput').value = '';
+
+                showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
+            } catch (error) {
+                console.error('Error submitting score:', error);
+                showMessage('Failed to submit score. Please try again.', 'error');
             }
-
-            dailyScores[today][name] = {
-                guesses: result.guesses,
-                green: result.green,
-                yellow: result.yellow,
-                tileScore: result.tileScore,
-                grid: result.grid
-            };
-
-            saveDailyScores(dailyScores);
-            calculateDailyWinner(today);
-
-            document.getElementById('gridInput').value = '';
-
-            showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
-            updateLeaderboard();
-            updateDailyResults();
-
-            console.log('Score submitted successfully');
         }
 
-        function calculateDailyWinner(date) {
-            const dailyScores = getDailyScores();
-            const dayScores = dailyScores[date];
+        async function calculateDailyWinner(date) {
+            const room = window.roomData;
+            const dayScores = room.dailyScores[date];
 
             if (!dayScores) return;
 
@@ -468,7 +569,10 @@ Wordle 1,234 3/6
             let bestTileScore = -1;
             let isTiebreaker = false;
 
+            // Find winner
             for (let player in dayScores) {
+                if (player.startsWith('_')) continue;
+
                 const score = dayScores[player];
                 const guesses = score.guesses === 'X' ? Infinity : parseInt(score.guesses);
 
@@ -486,41 +590,73 @@ Wordle 1,234 3/6
                 }
             }
 
-            dailyScores[date]._winner = winner;
-            dailyScores[date]._isTiebreaker = isTiebreaker;
-            saveDailyScores(dailyScores);
+            // Update winner in Firestore
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', 'GLOBAL');
+            await window.firestoreFunctions.updateDoc(roomRef, {
+                [`dailyScores.${date}._winner`]: winner,
+                [`dailyScores.${date}._isTiebreaker`]: isTiebreaker
+            });
 
+            // Update player's total wins
             if (winner) {
+                // Recalculate all wins
                 const allWins = {};
-                for (let date in dailyScores) {
-                    const dayWinner = dailyScores[date]._winner;
+                for (let d in room.dailyScores) {
+                    const dayWinner = room.dailyScores[d]._winner;
                     if (dayWinner) {
                         allWins[dayWinner] = (allWins[dayWinner] || 0) + 1;
                     }
                 }
 
-                const allPlayers = new Set();
-                for (let date in dailyScores) {
-                    for (let player in dailyScores[date]) {
-                        if (!player.startsWith('_')) {
-                            allPlayers.add(player);
-                        }
-                    }
+                // Update all players' win counts
+                const updates = {};
+                for (let player in room.players) {
+                    updates[`players.${player}.totalWins`] = allWins[player] || 0;
                 }
 
-                const updatedPlayers = {};
-                allPlayers.forEach(player => {
-                    updatedPlayers[player] = { totalWins: allWins[player] || 0 };
-                });
-
-                savePlayers(updatedPlayers);
+                await window.firestoreFunctions.updateDoc(roomRef, updates);
             }
         }
 
+        function checkTodaySubmission() {
+            const today = new Date().toISOString().split('T')[0];
+            const room = window.roomData;
+            const name = window.currentPlayer;
+
+            if (name && room.dailyScores[today] && room.dailyScores[today][name]) {
+                disableSubmission();
+            } else {
+                enableSubmission();
+            }
+        }
+
+        function disableSubmission() {
+            document.getElementById('gridInput').disabled = true;
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Already Submitted Today';
+        }
+
+        function enableSubmission() {
+            document.getElementById('gridInput').disabled = false;
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Score';
+        }
+
+        function updateUI() {
+            updateLeaderboard();
+            updateDailyResults();
+        }
+
         function updateLeaderboard() {
-            const players = getPlayers();
+            const room = window.roomData;
+            if (!room || !room.players) return;
+
             const tbody = document.getElementById('leaderboardBody');
-            const sortedPlayers = Object.entries(players).sort((a, b) => b[1].totalWins - a[1].totalWins);
+            const sortedPlayers = Object.entries(room.players).sort((a, b) =>
+                (b[1].totalWins || 0) - (a[1].totalWins || 0)
+            );
 
             tbody.innerHTML = '';
 
@@ -530,24 +666,26 @@ Wordle 1,234 3/6
                 return;
             }
 
-            sortedPlayers.forEach(([name, data], index) => {
+            sortedPlayers.forEach(([playerId, player], index) => {
                 const row = tbody.insertRow();
-                if (index === 0 && data.totalWins > 0) {
+                if (index === 0 && player.totalWins > 0) {
                     row.classList.add('rank-1');
                 }
 
                 row.innerHTML = `
                     <td class="rank">${index + 1}</td>
-                    <td>${name}</td>
-                    <td class="wins">${data.totalWins}</td>
+                    <td>${player.name}</td>
+                    <td class="wins">${player.totalWins || 0}</td>
                 `;
             });
         }
 
         function updateDailyResults() {
-            const dailyScores = getDailyScores();
+            const room = window.roomData;
+            if (!room) return;
+
             const container = document.getElementById('dailyResultsContainer');
-            const dates = Object.keys(dailyScores).sort().reverse();
+            const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
             if (dates.length === 0) {
                 container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
@@ -556,7 +694,7 @@ Wordle 1,234 3/6
 
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
-                const dayData = dailyScores[date];
+                const dayData = room.dailyScores[date];
                 const winner = dayData._winner;
                 const isTiebreaker = dayData._isTiebreaker;
 
@@ -603,18 +741,6 @@ Wordle 1,234 3/6
             });
         }
 
-        function showMessage(text, type) {
-            const container = document.getElementById('messageContainer');
-            container.innerHTML = `<div class="message ${type}">${text}</div>`;
-            setTimeout(() => {
-                container.innerHTML = '';
-            }, 4000);
-        }
-
-        function getToday() {
-            return new Date().toISOString().split('T')[0];
-        }
-
         function formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
             return date.toLocaleDateString('en-US', {
@@ -623,22 +749,6 @@ Wordle 1,234 3/6
                 day: 'numeric',
                 year: 'numeric'
             });
-        }
-
-        function getPlayers() {
-            return JSON.parse(localStorage.getItem('wordlePlayers') || '{}');
-        }
-
-        function savePlayers(players) {
-            localStorage.setItem('wordlePlayers', JSON.stringify(players));
-        }
-
-        function getDailyScores() {
-            return JSON.parse(localStorage.getItem('wordleDailyScores') || '{}');
-        }
-
-        function saveDailyScores(scores) {
-            localStorage.setItem('wordleDailyScores', JSON.stringify(scores));
         }
     </script>
 </body>
