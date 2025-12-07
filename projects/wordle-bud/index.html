@@ -401,6 +401,14 @@ Wordle 1,234 3/6
     <!-- Core Functions -->
     <script>
         // UI and utility functions
+        function getLocalDateString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function showMessage(text, type = 'info') {
             const container = document.getElementById('messageContainer');
             container.innerHTML = `<div class="message ${type}">${text}</div>`;
@@ -470,7 +478,7 @@ Wordle 1,234 3/6
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
 
             // Check if already submitted
             if (window.roomData.dailyScores[today] && window.roomData.dailyScores[today][name]) {
@@ -582,7 +590,7 @@ Wordle 1,234 3/6
         }
 
         function checkTodaySubmission() {
-            const today = new Date().toISOString().split('T')[0];
+            const today = getLocalDateString();
             const room = window.roomData;
             const name = window.currentPlayer;
             const lastCheckedDate = localStorage.getItem('lastCheckedDate');
