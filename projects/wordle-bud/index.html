@@ -20,6 +20,7 @@
             flex-direction: column;
         }
 
+        /* Header */
         header {
             border-bottom: 1px solid #d3d6da;
             padding: 12px 0;
@@ -42,6 +43,7 @@
             margin-top: 4px;
         }
 
+        /* Main Container */
         .container {
             max-width: 500px;
             margin: 0 auto;
@@ -49,8 +51,40 @@
             width: 100%;
         }
 
+        /* Section Visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Common Styles */
+        .card {
+            background-color: #f6f7f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #1a1a1b;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #1a1a1b;
+        }
+
+        /* Input Styles */
         input[type="text"],
-        textarea {
+        input[type="number"],
+        textarea,
+        select {
             width: 100%;
             padding: 14px;
             font-size: 16px;
@@ -62,7 +96,9 @@
         }
 
         input[type="text"]:focus,
-        textarea:focus {
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: #787c7e;
         }
@@ -74,6 +110,14 @@
             line-height: 1.4;
         }
 
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1b;
+        }
+
+        /* Button Styles */
         button {
             background-color: #6aaa64;
             color: white;
@@ -102,27 +146,168 @@
             cursor: not-allowed;
         }
 
-        .form-group {
+        button.secondary {
+            background-color: #787c7e;
+        }
+
+        button.secondary:hover:not(:disabled) {
+            background-color: #6a6d70;
+        }
+
+        button.small {
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+            margin: 0;
+        }
+
+        /* Room Selection */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
-        .form-group label {
-            display: block;
+        .mode-card {
+            background-color: white;
+            border: 2px solid #d3d6da;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-card:hover {
+            border-color: #6aaa64;
+            background-color: #f6f7f8;
+        }
+
+        .mode-card.selected {
+            border-color: #6aaa64;
+            background-color: #e8f5e7;
+        }
+
+        .mode-card .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .mode-card .title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .mode-card .description {
+            font-size: 12px;
+            color: #787c7e;
+        }
+
+        /* Room Info */
+        .room-info {
+            background-color: #f6f7f8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .room-name {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .room-code {
+            font-family: 'Courier New', monospace;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #d3d6da;
+            font-size: 16px;
+            font-weight: 700;
+            color: #6aaa64;
+        }
+
+        .room-mode {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: white;
+            border-radius: 4px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 8px;
+        }
+
+        /* Players List */
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .player-tag {
+            background-color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            border: 1px solid #d3d6da;
+        }
+
+        .player-tag.current {
+            border-color: #6aaa64;
+            background-color: #e8f5e7;
+            font-weight: 600;
+        }
+
+        /* Guess Options */
+        .guess-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .guess-btn {
+            padding: 16px;
+            background-color: #ffffff;
+            border: 2px solid #d3d6da;
             color: #1a1a1b;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin: 0;
         }
 
-        .leaderboard {
-            margin-top: 30px;
+        .guess-btn:hover:not(:disabled) {
+            border-color: #787c7e;
+            background-color: #f6f7f8;
         }
 
-        .leaderboard h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            text-align: center;
+        .guess-btn.selected {
+            background-color: #6aaa64;
+            border-color: #6aaa64;
+            color: white;
         }
 
+        .guess-btn.failed {
+            background-color: #787c7e;
+            border-color: #787c7e;
+            color: white;
+        }
+
+        /* Leaderboard */
         .leaderboard-table {
             width: 100%;
             border-collapse: separate;
@@ -130,6 +315,7 @@
             border: 1px solid #d3d6da;
             border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
         .leaderboard-table th,
@@ -165,16 +351,7 @@
             background-color: #fff8e1;
         }
 
-        .daily-results {
-            margin-top: 30px;
-        }
-
-        .daily-results h2 {
-            font-size: 20px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
+        /* Daily Results */
         .day-result {
             border: 1px solid #d3d6da;
             border-radius: 8px;
@@ -250,13 +427,7 @@
             margin-left: 4px;
         }
 
-        .help-text {
-            font-size: 13px;
-            color: #787c7e;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
+        /* Message */
         .message {
             padding: 12px;
             border-radius: 4px;
@@ -297,6 +468,19 @@
             .container {
                 padding: 12px;
             }
+
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .guess-options {
+                gap: 6px;
+            }
+
+            .guess-btn {
+                padding: 12px 8px;
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -326,6 +510,44 @@
 
 Wordle 1,234 3/6
 
+        <!-- Game Section -->
+        <div class="section" id="gameSection">
+            <!-- Room Info -->
+            <div class="room-info">
+                <div class="room-header">
+                    <div>
+                        <div class="room-name" id="roomName"></div>
+                        <span class="room-mode" id="roomModeDisplay"></span>
+                    </div>
+                    <button class="secondary small" onclick="leaveRoom()">Leave</button>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; color: #787c7e;">Room Code:</span>
+                    <span class="room-code" id="roomCodeDisplay"></span>
+                </div>
+                <div style="margin-top: 12px;">
+                    <div style="font-size: 12px; color: #787c7e; margin-bottom: 4px;">Players:</div>
+                    <div class="players-list" id="playersList"></div>
+                </div>
+            </div>
+
+            <!-- Score Entry Form -->
+            <div class="card">
+                <h3>Submit Today's Score</h3>
+
+                <label>Guess Count</label>
+                <div class="guess-options">
+                    <button class="guess-btn" onclick="selectGuess(1)">1</button>
+                    <button class="guess-btn" onclick="selectGuess(2)">2</button>
+                    <button class="guess-btn" onclick="selectGuess(3)">3</button>
+                    <button class="guess-btn" onclick="selectGuess(4)">4</button>
+                    <button class="guess-btn" onclick="selectGuess(5)">5</button>
+                    <button class="guess-btn" onclick="selectGuess(6)">6</button>
+                    <button class="guess-btn failed" onclick="selectGuess('X')">X</button>
+                </div>
+
+                <label>Wordle Grid</label>
+                <textarea id="gridInput" placeholder="Paste your Wordle emoji grid here...
 ⬜🟨⬜⬜⬜
 ⬜🟩⬜🟩⬜
 🟩🟩🟩🟩🟩"></textarea>
@@ -456,24 +678,51 @@ Wordle 1,234 3/6
                     break;
                 }
             }
+        }
+    </script>
 
-            // Find all lines with Wordle emoji squares
-            const emojiPattern = /[⬜⬛🟨🟩]+/;
-            const gridLines = lines.filter(line => emojiPattern.test(line));
+    <script>
+        // UI Management
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
 
-            // If no guess count found in header, count the grid lines
-            if (!guessCount && gridLines.length > 0) {
-                guessCount = gridLines.length.toString();
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        // Player Name Setup
+        function setPlayerName() {
+            const name = document.getElementById('playerNameInput').value.trim();
+            if (!name) {
+                showMessage('Please enter your name', 'error');
+                return;
             }
+            window.currentPlayer = name;
+            localStorage.setItem('playerName', name);
+            showSection('roomSelectionSection');
+        }
 
-            // Count green and yellow tiles for tiebreaker
-            const fullGrid = gridLines.join('');
-            let greenCount = 0;
-            let yellowCount = 0;
+        // Mode Selection
+        function selectMode(mode) {
+            window.selectedMode = mode;
+            document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('selected'));
+            event.target.closest('.mode-card').classList.add('selected');
+            document.getElementById('modeOptions').style.display = 'block';
+        }
 
-            for (let char of fullGrid) {
-                if (char === '🟩') greenCount++;
-                if (char === '🟨') yellowCount++;
+        // Room Management
+        function generateRoomCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        async function createRoom() {
+            if (!window.selectedMode) {
+                showMessage('Please select a game mode first', 'error');
+                return;
             }
 
             return {
@@ -495,16 +744,52 @@ Wordle 1,234 3/6
                 return;
             }
 
-            if (!gridText) {
-                showMessage('Please paste your Wordle result', 'error');
-                return;
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
+
+            try {
+                const roomSnap = await window.firestoreFunctions.getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    showMessage('Room not found', 'error');
+                    return;
+                }
+
+                const roomData = roomSnap.data();
+
+                // Check if room is 1v1 and already has 2 players
+                if (roomData.mode === '1v1' && Object.keys(roomData.players || {}).length >= 2) {
+                    if (!roomData.players[window.currentPlayer]) {
+                        showMessage('This 1v1 room is full', 'error');
+                        return;
+                    }
+                }
+
+                // Add player to room if not already in
+                if (!roomData.players[window.currentPlayer]) {
+                    await window.firestoreFunctions.updateDoc(roomRef, {
+                        [`players.${window.currentPlayer}`]: {
+                            name: window.currentPlayer,
+                            totalWins: 0,
+                            joinedAt: new Date().toISOString()
+                        }
+                    });
+                }
+
+                window.currentRoom = roomCode;
+                localStorage.setItem('currentRoom', roomCode);
+                loadRoom(roomCode);
+                showMessage('Joined room successfully!', 'success');
+            } catch (error) {
+                console.error('Error joining room:', error);
+                showMessage('Failed to join room', 'error');
             }
+        }
 
             const result = parseWordleResult(gridText);
 
-            if (!result.valid) {
-                showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
-                return;
+            // Unsubscribe from previous room if any
+            if (window.unsubscribeRoom) {
+                window.unsubscribeRoom();
             }
 
             const today = new Date().toISOString().split('T')[0];
@@ -514,6 +799,11 @@ Wordle 1,234 3/6
                 showMessage('You already submitted a score for today!', 'error');
                 return;
             }
+            window.currentRoom = null;
+            window.roomData = null;
+            localStorage.removeItem('currentRoom');
+            showSection('roomSelectionSection');
+        }
 
             // Save player name
             window.currentPlayer = name;
@@ -658,7 +948,9 @@ Wordle 1,234 3/6
                 (b[1].totalWins || 0) - (a[1].totalWins || 0)
             );
 
-            tbody.innerHTML = '';
+            const sortedPlayers = Object.entries(room.players).sort((a, b) =>
+                (b[1].totalWins || 0) - (a[1].totalWins || 0)
+            );
 
             if (sortedPlayers.length === 0) {
                 const row = tbody.insertRow();
@@ -687,10 +979,7 @@ Wordle 1,234 3/6
             const container = document.getElementById('dailyResultsContainer');
             const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
-            if (dates.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
-                return;
-            }
+            const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
@@ -703,7 +992,6 @@ Wordle 1,234 3/6
                     .sort((a, b) => {
                         const guessA = a[1].guesses === 'X' ? Infinity : parseInt(a[1].guesses);
                         const guessB = b[1].guesses === 'X' ? Infinity : parseInt(b[1].guesses);
-
                         if (guessA !== guessB) return guessA - guessB;
                         return b[1].tileScore - a[1].tileScore;
                     });
@@ -719,7 +1007,7 @@ Wordle 1,234 3/6
                         <div class="player-score ${isWinner ? 'winner' : ''}">
                             <span class="name">${name}</span>
                             <span class="score">
-                                <span class="guesses">${score.guesses}/6</span>
+                                <span class="guesses">${score.guesses}</span>
                                 <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
                                 ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
                             </span>
@@ -739,7 +1027,6 @@ Wordle 1,234 3/6
 
                 container.appendChild(dayDiv);
             });
-        }
 
         function formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
