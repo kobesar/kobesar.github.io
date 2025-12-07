@@ -353,6 +353,7 @@ Wordle 1,234 3/6
             const lines = text.trim().split('\n');
             let guessCount = null;
 
+            // Look for Wordle header line (e.g., "Wordle 1,234 3/6" or "Wordle 1234 3/6")
             for (let line of lines) {
                 const match = line.match(/wordle\s+[\d,]+\s+([X\d])\/6/i);
                 if (match) {
@@ -361,57 +362,69 @@ Wordle 1,234 3/6
                 }
             }
 
+            // Find all lines with Wordle emoji squares
             const emojiPattern = /[⬜⬛🟨🟩]+/;
             const gridLines = lines.filter(line => emojiPattern.test(line));
 
+            // If no guess count found in header, count the grid lines
             if (!guessCount && gridLines.length > 0) {
                 guessCount = gridLines.length.toString();
             }
 
+            // Count green and yellow tiles for tiebreaker
             const fullGrid = gridLines.join('');
-            const green = '🟩';
-            const yellow = '🟨';
-
             let greenCount = 0;
             let yellowCount = 0;
 
-            for (let char of gridText) {
-                if (char === green) greenCount++;
-                if (char === yellow) yellowCount++;
+            for (let char of fullGrid) {
+                if (char === '🟩') greenCount++;
+                if (char === '🟨') yellowCount++;
             }
 
-            return {
+            const result = {
+                guesses: guessCount || 'X',
                 green: greenCount,
                 yellow: yellowCount,
-                tileScore: greenCount * 1 + yellowCount * 0.5
+                tileScore: greenCount * 1 + yellowCount * 0.5,
+                grid: gridLines.join('\n'),
+                valid: gridLines.length > 0
             };
+
+            console.log('parseWordleResult:', result);
+            return result;
         }
 
         function submitScore() {
+            console.log('submitScore called');
             const name = document.getElementById('playerNameInput').value.trim();
             const gridText = document.getElementById('gridInput').value.trim();
+
+            console.log('Name:', name);
+            console.log('Grid text:', gridText);
 
             if (!name) {
                 showMessage('Please enter your name', 'error');
                 return;
             }
 
-            const gridText = document.getElementById('gridInput').value.trim();
             if (!gridText) {
                 showMessage('Please paste your Wordle result', 'error');
                 return;
             }
 
             const result = parseWordleResult(gridText);
+            console.log('Parsed result:', result);
 
             if (!result.valid) {
                 showMessage('Could not find a valid Wordle grid. Please paste the entire result.', 'error');
-                showMessage('Please paste your Wordle grid', 'error');
                 return;
             }
 
             const today = getToday();
             const dailyScores = getDailyScores();
+
+            console.log('Today:', today);
+            console.log('Daily scores:', dailyScores);
 
             if (dailyScores[today] && dailyScores[today][name]) {
                 showMessage('You already submitted a score for today!', 'error');
@@ -440,6 +453,8 @@ Wordle 1,234 3/6
             showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
             updateLeaderboard();
             updateDailyResults();
+
+            console.log('Score submitted successfully');
         }
 
         function calculateDailyWinner(date) {
@@ -534,6 +549,11 @@ Wordle 1,234 3/6
             const container = document.getElementById('dailyResultsContainer');
             const dates = Object.keys(dailyScores).sort().reverse();
 
+            if (dates.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 20px; color: #787c7e;">No daily results yet</p>';
+                return;
+            }
+
             container.innerHTML = '';
             dates.slice(0, 10).forEach(date => {
                 const dayData = dailyScores[date];
@@ -561,7 +581,7 @@ Wordle 1,234 3/6
                         <div class="player-score ${isWinner ? 'winner' : ''}">
                             <span class="name">${name}</span>
                             <span class="score">
-                                <span class="guesses">${score.guesses}</span>
+                                <span class="guesses">${score.guesses}/6</span>
                                 <span class="tiles">🟩${score.green} 🟨${score.yellow}</span>
                                 ${showTiebreaker ? '<span class="tiebreaker-note">*tiebreaker</span>' : ''}
                             </span>
