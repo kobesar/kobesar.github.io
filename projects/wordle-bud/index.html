@@ -454,22 +454,12 @@
             border: 1px solid #bee5eb;
         }
 
-        /* Help Text */
-        .help-text {
-            font-size: 13px;
-            color: #787c7e;
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        /* Loading */
         .loading {
             text-align: center;
             padding: 40px 20px;
             color: #787c7e;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             h1 {
                 font-size: 28px;
@@ -503,46 +493,22 @@
     <div class="container">
         <div id="messageContainer"></div>
 
-        <!-- Setup Section -->
-        <div class="section active" id="setupSection">
-            <div style="text-align: center; padding: 40px 20px;">
-                <h2>Welcome to Wordle Tracker</h2>
+        <div id="loadingSection" class="loading">
+            Connecting to server...
+        </div>
+
+        <div id="mainSection" style="display: none;">
+            <div class="form-group">
                 <label>Your Name</label>
                 <input type="text" id="playerNameInput" placeholder="Enter your name" autocomplete="off">
-                <button onclick="setPlayerName()">Continue</button>
-            </div>
-        </div>
-
-        <!-- Room Selection Section -->
-        <div class="section" id="roomSelectionSection">
-            <h2>Choose Game Mode</h2>
-
-            <div class="mode-selector">
-                <div class="mode-card" onclick="selectMode('1v1')">
-                    <div class="icon">⚔️</div>
-                    <div class="title">1v1 Battle</div>
-                    <div class="description">Challenge one friend</div>
-                </div>
-                <div class="mode-card" onclick="selectMode('group')">
-                    <div class="icon">👥</div>
-                    <div class="title">Group Play</div>
-                    <div class="description">Play with multiple friends</div>
-                </div>
+                <div class="help-text">This will be used to identify you on the leaderboard</div>
             </div>
 
-            <div id="modeOptions" style="display: none;">
-                <h3>Create or Join Room</h3>
-                <button onclick="createRoom()">Create New Room</button>
-                <button class="secondary" onclick="showJoinRoom()">Join Existing Room</button>
+            <div class="form-group">
+                <label>Paste Your Wordle Result</label>
+                <textarea id="gridInput" placeholder="Paste your entire Wordle result here...
 
-                <div id="joinRoomForm" style="display: none; margin-top: 16px;">
-                    <label>Room Code</label>
-                    <input type="text" id="roomCodeInput" placeholder="Enter room code" style="text-transform: uppercase;">
-                    <button onclick="joinRoom()">Join Room</button>
-                    <button class="secondary" onclick="hideJoinRoom()">Cancel</button>
-                </div>
-            </div>
-        </div>
+Wordle 1,234 3/6
 
         <!-- Game Section -->
         <div class="section" id="gameSection">
@@ -585,14 +551,13 @@
 ⬜🟨⬜⬜⬜
 ⬜🟩⬜🟩⬜
 🟩🟩🟩🟩🟩"></textarea>
-                <div class="help-text">Include the colored squares (⬜🟨🟩) from your Wordle result</div>
-
-                <button id="submitBtn" onclick="submitScore()">Submit Score</button>
+                <div class="help-text">Paste the entire Wordle share text including the emoji grid. We'll automatically detect your guess count!</div>
             </div>
 
-            <!-- Leaderboard -->
-            <div style="margin-top: 30px;">
-                <h2 style="text-align: center;">🏆 Leaderboard</h2>
+            <button onclick="submitScore()" id="submitBtn">Submit Score</button>
+
+            <div class="leaderboard">
+                <h2>🏆 All-Time Leaderboard</h2>
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
@@ -606,9 +571,8 @@
                 </table>
             </div>
 
-            <!-- Daily Results -->
-            <div style="margin-top: 30px;">
-                <h2 style="text-align: center;">📅 Recent Results</h2>
+            <div class="daily-results">
+                <h2>📅 Recent Results</h2>
                 <div id="dailyResultsContainer"></div>
             </div>
         </div>
@@ -617,9 +581,9 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, updateDoc, query, orderBy, limit } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Firebase configuration - REPLACE WITH YOUR CONFIG
+        // Firebase configuration
         const firebaseConfig = {
           apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
           authDomain: "wordle-bud.firebaseapp.com",
@@ -638,27 +602,81 @@
             console.log('Firebase initialized successfully');
         } catch (error) {
             console.error('Firebase initialization error:', error);
-            showMessage('Please configure Firebase settings in the code', 'error');
+            showMessage('Failed to connect to server. Please refresh the page.', 'error');
         }
 
         // Global state
         window.currentPlayer = localStorage.getItem('playerName') || null;
-        window.currentRoom = localStorage.getItem('currentRoom') || null;
-        window.selectedMode = null;
-        window.selectedGuessCount = null;
         window.roomData = null;
         window.unsubscribeRoom = null;
 
         // Make Firebase functions available globally
         window.db = db;
-        window.firestoreFunctions = { doc, setDoc, getDoc, getDocs, onSnapshot, updateDoc, collection, query, orderBy, limit };
+        window.firestoreFunctions = { doc, setDoc, getDoc, onSnapshot, updateDoc };
 
-        // Initialize app
-        if (window.currentPlayer) {
-            if (window.currentRoom) {
-                loadRoom(window.currentRoom);
-            } else {
-                showSection('roomSelectionSection');
+        // Initialize global room
+        initializeGlobalRoom();
+
+        async function initializeGlobalRoom() {
+            const ROOM_CODE = 'GLOBAL';
+            const roomRef = doc(db, 'rooms', ROOM_CODE);
+
+            try {
+                const roomSnap = await getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    // Create global room if it doesn't exist
+                    await setDoc(roomRef, {
+                        code: ROOM_CODE,
+                        createdAt: new Date().toISOString(),
+                        players: {},
+                        dailyScores: {}
+                    });
+                }
+
+                // Subscribe to room updates
+                window.unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+                    window.roomData = doc.data();
+                    updateUI();
+                    checkTodaySubmission();
+                });
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+
+                // Load saved player name
+                if (window.currentPlayer) {
+                    document.getElementById('playerNameInput').value = window.currentPlayer;
+                }
+
+            } catch (error) {
+                console.error('Error initializing room:', error);
+                showMessage('Failed to connect to server. Please refresh the page.', 'error');
+            }
+        }
+
+        // Make functions globally available
+        window.initializeGlobalRoom = initializeGlobalRoom;
+    </script>
+
+    <script>
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function parseWordleResult(text) {
+            const lines = text.trim().split('\n');
+            let guessCount = null;
+
+            // Look for Wordle header line (e.g., "Wordle 1,234 3/6" or "Wordle 1234 3/6")
+            for (let line of lines) {
+                const match = line.match(/wordle\s+[\d,]+\s+([X\d])\/6/i);
+                if (match) {
+                    guessCount = match[1];
+                    break;
+                }
             }
         }
     </script>
@@ -707,49 +725,22 @@
                 return;
             }
 
-            const roomCode = generateRoomCode();
-            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
-
-            const roomData = {
-                code: roomCode,
-                mode: window.selectedMode,
-                createdBy: window.currentPlayer,
-                createdAt: new Date().toISOString(),
-                players: {
-                    [window.currentPlayer]: {
-                        name: window.currentPlayer,
-                        totalWins: 0,
-                        joinedAt: new Date().toISOString()
-                    }
-                },
-                dailyScores: {}
+            return {
+                guesses: guessCount || 'X',
+                green: greenCount,
+                yellow: yellowCount,
+                tileScore: greenCount * 1 + yellowCount * 0.5,
+                grid: gridLines.join('\n'),
+                valid: gridLines.length > 0
             };
-
-            try {
-                await window.firestoreFunctions.setDoc(roomRef, roomData);
-                window.currentRoom = roomCode;
-                localStorage.setItem('currentRoom', roomCode);
-                loadRoom(roomCode);
-                showMessage('Room created successfully!', 'success');
-            } catch (error) {
-                console.error('Error creating room:', error);
-                showMessage('Failed to create room. Please check Firebase configuration.', 'error');
-            }
         }
 
-        function showJoinRoom() {
-            document.getElementById('joinRoomForm').style.display = 'block';
-        }
+        async function submitScore() {
+            const name = document.getElementById('playerNameInput').value.trim();
+            const gridText = document.getElementById('gridInput').value.trim();
 
-        function hideJoinRoom() {
-            document.getElementById('joinRoomForm').style.display = 'none';
-            document.getElementById('roomCodeInput').value = '';
-        }
-
-        async function joinRoom() {
-            const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
-            if (!roomCode) {
-                showMessage('Please enter a room code', 'error');
+            if (!name) {
+                showMessage('Please enter your name', 'error');
                 return;
             }
 
@@ -794,62 +785,19 @@
             }
         }
 
-        async function loadRoom(roomCode) {
-            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', roomCode);
+            const result = parseWordleResult(gridText);
 
             // Unsubscribe from previous room if any
             if (window.unsubscribeRoom) {
                 window.unsubscribeRoom();
             }
 
-            // Listen to room updates in real-time
-            window.unsubscribeRoom = window.firestoreFunctions.onSnapshot(roomRef, (doc) => {
-                if (doc.exists()) {
-                    window.roomData = doc.data();
-                    updateGameUI();
-                    showSection('gameSection');
-                } else {
-                    showMessage('Room no longer exists', 'error');
-                    leaveRoom();
-                }
-            }, (error) => {
-                console.error('Error loading room:', error);
-                showMessage('Failed to load room', 'error');
-            });
-        }
+            const today = new Date().toISOString().split('T')[0];
 
-        function updateGameUI() {
-            const room = window.roomData;
-
-            // Update room info
-            document.getElementById('roomName').textContent = `${room.mode === '1v1' ? '⚔️ 1v1' : '👥 Group'} Battle`;
-            document.getElementById('roomModeDisplay').textContent = room.mode === '1v1' ? '1v1 Mode' : 'Group Mode';
-            document.getElementById('roomCodeDisplay').textContent = room.code;
-
-            // Update players list
-            const playersList = document.getElementById('playersList');
-            playersList.innerHTML = '';
-            for (let playerId in room.players) {
-                const player = room.players[playerId];
-                const tag = document.createElement('div');
-                tag.className = 'player-tag' + (playerId === window.currentPlayer ? ' current' : '');
-                tag.textContent = player.name;
-                playersList.appendChild(tag);
-            }
-
-            // Update leaderboard
-            updateLeaderboard();
-
-            // Update daily results
-            updateDailyResults();
-
-            // Check if player already submitted today
-            checkTodaySubmission();
-        }
-
-        function leaveRoom() {
-            if (window.unsubscribeRoom) {
-                window.unsubscribeRoom();
+            // Check if already submitted
+            if (window.roomData.dailyScores[today] && window.roomData.dailyScores[today][name]) {
+                showMessage('You already submitted a score for today!', 'error');
+                return;
             }
             window.currentRoom = null;
             window.roomData = null;
@@ -857,58 +805,32 @@
             showSection('roomSelectionSection');
         }
 
-        // Score Submission
-        function selectGuess(count) {
-            window.selectedGuessCount = count;
-            document.querySelectorAll('.guess-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            event.target.classList.add('selected');
-        }
+            // Save player name
+            window.currentPlayer = name;
+            localStorage.setItem('playerName', name);
 
-        function parseGrid(gridText) {
-            const green = '🟩';
-            const yellow = '🟨';
-            let greenCount = 0;
-            let yellowCount = 0;
-
-            for (let char of gridText) {
-                if (char === green) greenCount++;
-                if (char === yellow) yellowCount++;
-            }
-
-            return {
-                green: greenCount,
-                yellow: yellowCount,
-                tileScore: greenCount * 1 + yellowCount * 0.5
-            };
-        }
-
-        async function submitScore() {
-            if (!window.selectedGuessCount) {
-                showMessage('Please select your guess count', 'error');
-                return;
-            }
-
-            const gridText = document.getElementById('gridInput').value.trim();
-            if (!gridText) {
-                showMessage('Please paste your Wordle grid', 'error');
-                return;
-            }
-
-            const gridData = parseGrid(gridText);
-            const today = new Date().toISOString().split('T')[0];
-
-            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', window.currentRoom);
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', 'GLOBAL');
 
             try {
+                // Add player to room if not exists
+                if (!window.roomData.players[name]) {
+                    await window.firestoreFunctions.updateDoc(roomRef, {
+                        [`players.${name}`]: {
+                            name: name,
+                            totalWins: 0,
+                            joinedAt: new Date().toISOString()
+                        }
+                    });
+                }
+
+                // Submit score
                 await window.firestoreFunctions.updateDoc(roomRef, {
-                    [`dailyScores.${today}.${window.currentPlayer}`]: {
-                        guesses: window.selectedGuessCount,
-                        green: gridData.green,
-                        yellow: gridData.yellow,
-                        tileScore: gridData.tileScore,
-                        grid: gridText,
+                    [`dailyScores.${today}.${name}`]: {
+                        guesses: result.guesses,
+                        green: result.green,
+                        yellow: result.yellow,
+                        tileScore: result.tileScore,
+                        grid: result.grid,
                         submittedAt: new Date().toISOString()
                     }
                 });
@@ -917,14 +839,12 @@
                 await calculateDailyWinner(today);
 
                 // Clear form
-                window.selectedGuessCount = null;
                 document.getElementById('gridInput').value = '';
-                document.querySelectorAll('.guess-btn').forEach(btn => btn.classList.remove('selected'));
 
-                showMessage('Score submitted successfully!', 'success');
+                showMessage(`Score submitted! You got it in ${result.guesses}/6 guesses.`, 'success');
             } catch (error) {
                 console.error('Error submitting score:', error);
-                showMessage('Failed to submit score', 'error');
+                showMessage('Failed to submit score. Please try again.', 'error');
             }
         }
 
@@ -961,7 +881,7 @@
             }
 
             // Update winner in Firestore
-            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', window.currentRoom);
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', 'GLOBAL');
             await window.firestoreFunctions.updateDoc(roomRef, {
                 [`dailyScores.${date}._winner`]: winner,
                 [`dailyScores.${date}._isTiebreaker`]: isTiebreaker
@@ -991,8 +911,9 @@
         function checkTodaySubmission() {
             const today = new Date().toISOString().split('T')[0];
             const room = window.roomData;
+            const name = window.currentPlayer;
 
-            if (room.dailyScores[today] && room.dailyScores[today][window.currentPlayer]) {
+            if (name && room.dailyScores[today] && room.dailyScores[today][name]) {
                 disableSubmission();
             } else {
                 enableSubmission();
@@ -1001,7 +922,6 @@
 
         function disableSubmission() {
             document.getElementById('gridInput').disabled = true;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = true);
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Already Submitted Today';
@@ -1009,22 +929,35 @@
 
         function enableSubmission() {
             document.getElementById('gridInput').disabled = false;
-            document.querySelectorAll('.guess-btn').forEach(btn => btn.disabled = false);
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Score';
         }
 
-        // Display Functions
+        function updateUI() {
+            updateLeaderboard();
+            updateDailyResults();
+        }
+
         function updateLeaderboard() {
             const room = window.roomData;
+            if (!room || !room.players) return;
+
             const tbody = document.getElementById('leaderboardBody');
+            const sortedPlayers = Object.entries(room.players).sort((a, b) =>
+                (b[1].totalWins || 0) - (a[1].totalWins || 0)
+            );
 
             const sortedPlayers = Object.entries(room.players).sort((a, b) =>
                 (b[1].totalWins || 0) - (a[1].totalWins || 0)
             );
 
-            tbody.innerHTML = '';
+            if (sortedPlayers.length === 0) {
+                const row = tbody.insertRow();
+                row.innerHTML = '<td colspan="3" style="text-align: center; padding: 20px; color: #787c7e;">No scores yet. Be the first to submit!</td>';
+                return;
+            }
+
             sortedPlayers.forEach(([playerId, player], index) => {
                 const row = tbody.insertRow();
                 if (index === 0 && player.totalWins > 0) {
@@ -1041,7 +974,10 @@
 
         function updateDailyResults() {
             const room = window.roomData;
+            if (!room) return;
+
             const container = document.getElementById('dailyResultsContainer');
+            const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
             const dates = Object.keys(room.dailyScores || {}).sort().reverse();
 
@@ -1091,11 +1027,6 @@
 
                 container.appendChild(dayDiv);
             });
-
-            if (dates.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #787c7e; padding: 20px;">No scores yet. Be the first to submit!</div>';
-            }
-        }
 
         function formatDate(dateStr) {
             const date = new Date(dateStr + 'T00:00:00');
