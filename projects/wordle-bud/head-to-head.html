@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wordle Head-to-Head</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            border-bottom: 1px solid #d3d6da;
+            padding: 12px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #787c7e;
+            margin-top: 4px;
+        }
+
+        .back-link {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6aaa64;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border: 1px solid #d3d6da;
+            border-radius: 4px;
+            font-family: inherit;
+            margin-bottom: 12px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #787c7e;
+        }
+
+        .player-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .player-select-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-select-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1b;
+        }
+
+        .vs-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #787c7e;
+            margin-top: 32px;
+        }
+
+        .stats-container {
+            display: none;
+        }
+
+        .stats-container.active {
+            display: block;
+        }
+
+        .stat-card {
+            background-color: #f6f7f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card h2 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #1a1a1b;
+        }
+
+        .head-to-head-score {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .player-stat {
+            text-align: center;
+        }
+
+        .player-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .player-wins {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6aaa64;
+        }
+
+        .player-wins.losing {
+            color: #787c7e;
+        }
+
+        .vs-divider {
+            font-size: 20px;
+            font-weight: 700;
+            color: #d3d6da;
+        }
+
+        .matchup-list {
+            margin-top: 20px;
+        }
+
+        .matchup-item {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 12px;
+            padding: 12px;
+            background-color: white;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .matchup-date {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #787c7e;
+        }
+
+        .matchup-score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .matchup-score.winner {
+            color: #6aaa64;
+        }
+
+        .matchup-score.loser {
+            color: #787c7e;
+        }
+
+        .matchup-score.tie {
+            color: #c9b458;
+        }
+
+        .matchup-details {
+            font-size: 12px;
+            color: #787c7e;
+            margin-top: 4px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #787c7e;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #1a1a1b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #787c7e;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .message.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            .player-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .vs-indicator {
+                margin-top: 0;
+                margin-bottom: 8px;
+            }
+
+            .back-link {
+                position: static;
+                display: block;
+                text-align: center;
+                margin-bottom: 10px;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="back-link">← Back to Tracker</a>
+        <h1>HEAD-TO-HEAD</h1>
+        <div class="subtitle">Compare player records</div>
+    </header>
+
+    <div class="container">
+        <div id="messageContainer"></div>
+
+        <div id="loadingSection" class="loading">
+            Loading players...
+        </div>
+
+        <div id="mainSection" style="display: none;">
+            <div class="player-selector">
+                <div class="player-select-group">
+                    <label>Player 1</label>
+                    <select id="player1Select" onchange="comparePlayers()">
+                        <option value="">Select Player 1</option>
+                    </select>
+                </div>
+                <div class="vs-indicator">VS</div>
+                <div class="player-select-group">
+                    <label>Player 2</label>
+                    <select id="player2Select" onchange="comparePlayers()">
+                        <option value="">Select Player 2</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="statsContainer" class="stats-container">
+                <!-- Overall Head-to-Head Record -->
+                <div class="stat-card">
+                    <h2>Head-to-Head Record</h2>
+                    <div class="head-to-head-score">
+                        <div class="player-stat">
+                            <div class="player-name" id="p1Name"></div>
+                            <div class="player-wins" id="p1Wins">0</div>
+                            <div class="matchup-details" id="p1Details"></div>
+                        </div>
+                        <div class="vs-divider">—</div>
+                        <div class="player-stat">
+                            <div class="player-name" id="p2Name"></div>
+                            <div class="player-wins" id="p2Wins">0</div>
+                            <div class="matchup-details" id="p2Details"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Stats -->
+                <div class="stat-card">
+                    <h2>Statistics</h2>
+                    <div id="additionalStats"></div>
+                </div>
+
+                <!-- Recent Matchups -->
+                <div class="stat-card">
+                    <h2>Matchup History</h2>
+                    <div id="matchupsList" class="matchup-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Functions -->
+    <script>
+        function showMessage(text, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr + 'T00:00:00');
+            return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        function populatePlayerDropdowns() {
+            const room = window.roomData;
+            if (!room || !room.players) return;
+
+            const players = Object.keys(room.players).sort();
+            const player1Select = document.getElementById('player1Select');
+            const player2Select = document.getElementById('player2Select');
+
+            // Clear existing options except the first one
+            player1Select.innerHTML = '<option value="">Select Player 1</option>';
+            player2Select.innerHTML = '<option value="">Select Player 2</option>';
+
+            players.forEach(player => {
+                const option1 = document.createElement('option');
+                option1.value = player;
+                option1.textContent = player;
+                player1Select.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = player;
+                option2.textContent = player;
+                player2Select.appendChild(option2);
+            });
+        }
+
+        function comparePlayers() {
+            const player1 = document.getElementById('player1Select').value;
+            const player2 = document.getElementById('player2Select').value;
+
+            if (!player1 || !player2) {
+                document.getElementById('statsContainer').classList.remove('active');
+                return;
+            }
+
+            if (player1 === player2) {
+                showMessage('Please select two different players', 'error');
+                document.getElementById('statsContainer').classList.remove('active');
+                return;
+            }
+
+            calculateHeadToHead(player1, player2);
+            document.getElementById('statsContainer').classList.add('active');
+        }
+
+        function calculateHeadToHead(player1, player2) {
+            const room = window.roomData;
+            const dailyScores = room.dailyScores || {};
+
+            let p1Wins = 0;
+            let p2Wins = 0;
+            let ties = 0;
+            const matchups = [];
+
+            let p1TotalGuesses = 0;
+            let p2TotalGuesses = 0;
+            let p1GamesPlayed = 0;
+            let p2GamesPlayed = 0;
+            let bothPlayedCount = 0;
+
+            // Analyze each day
+            for (let date in dailyScores) {
+                const dayData = dailyScores[date];
+                const p1Score = dayData[player1];
+                const p2Score = dayData[player2];
+
+                // Track total games played
+                if (p1Score) {
+                    p1GamesPlayed++;
+                    const guesses = p1Score.guesses === 'X' ? 7 : parseInt(p1Score.guesses);
+                    p1TotalGuesses += guesses;
+                }
+                if (p2Score) {
+                    p2GamesPlayed++;
+                    const guesses = p2Score.guesses === 'X' ? 7 : parseInt(p2Score.guesses);
+                    p2TotalGuesses += guesses;
+                }
+
+                // Only compare days where both played
+                if (p1Score && p2Score) {
+                    bothPlayedCount++;
+                    const p1Guesses = p1Score.guesses === 'X' ? Infinity : parseInt(p1Score.guesses);
+                    const p2Guesses = p2Score.guesses === 'X' ? Infinity : parseInt(p2Score.guesses);
+
+                    let result;
+                    if (p1Guesses < p2Guesses) {
+                        p1Wins++;
+                        result = 'p1-win';
+                    } else if (p2Guesses < p1Guesses) {
+                        p2Wins++;
+                        result = 'p2-win';
+                    } else {
+                        // Tiebreaker - check tile score
+                        if (p1Score.tileScore > p2Score.tileScore) {
+                            p1Wins++;
+                            result = 'p1-win-tie';
+                        } else if (p2Score.tileScore > p1Score.tileScore) {
+                            p2Wins++;
+                            result = 'p2-win-tie';
+                        } else {
+                            ties++;
+                            result = 'tie';
+                        }
+                    }
+
+                    matchups.push({
+                        date,
+                        p1Score,
+                        p2Score,
+                        p1Guesses,
+                        p2Guesses,
+                        result
+                    });
+                }
+            }
+
+            // Sort matchups by date (most recent first)
+            matchups.sort((a, b) => b.date.localeCompare(a.date));
+
+            // Display results
+            displayHeadToHeadResults(player1, player2, {
+                p1Wins,
+                p2Wins,
+                ties,
+                bothPlayedCount,
+                p1AvgGuesses: p1GamesPlayed > 0 ? (p1TotalGuesses / p1GamesPlayed).toFixed(2) : 'N/A',
+                p2AvgGuesses: p2GamesPlayed > 0 ? (p2TotalGuesses / p2GamesPlayed).toFixed(2) : 'N/A',
+                p1GamesPlayed,
+                p2GamesPlayed,
+                matchups
+            });
+        }
+
+        function displayHeadToHeadResults(player1, player2, stats) {
+            // Update player names
+            document.getElementById('p1Name').textContent = player1;
+            document.getElementById('p2Name').textContent = player2;
+
+            // Update win counts
+            const p1WinsEl = document.getElementById('p1Wins');
+            const p2WinsEl = document.getElementById('p2Wins');
+
+            p1WinsEl.textContent = stats.p1Wins;
+            p2WinsEl.textContent = stats.p2Wins;
+
+            // Apply winning/losing styles
+            if (stats.p1Wins > stats.p2Wins) {
+                p1WinsEl.classList.remove('losing');
+                p2WinsEl.classList.add('losing');
+            } else if (stats.p2Wins > stats.p1Wins) {
+                p1WinsEl.classList.add('losing');
+                p2WinsEl.classList.remove('losing');
+            } else {
+                p1WinsEl.classList.remove('losing');
+                p2WinsEl.classList.remove('losing');
+            }
+
+            // Update details
+            document.getElementById('p1Details').textContent = `${stats.p1GamesPlayed} games played`;
+            document.getElementById('p2Details').textContent = `${stats.p2GamesPlayed} games played`;
+
+            // Additional stats
+            const additionalStats = document.getElementById('additionalStats');
+            additionalStats.innerHTML = `
+                <div class="stat-row">
+                    <span class="stat-label">Matchups</span>
+                    <span class="stat-value">${stats.bothPlayedCount} days</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Ties</span>
+                    <span class="stat-value">${stats.ties}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">${player1} Avg Guesses</span>
+                    <span class="stat-value">${stats.p1AvgGuesses}</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">${player2} Avg Guesses</span>
+                    <span class="stat-value">${stats.p2AvgGuesses}</span>
+                </div>
+            `;
+
+            // Display matchup history
+            const matchupsList = document.getElementById('matchupsList');
+            if (stats.matchups.length === 0) {
+                matchupsList.innerHTML = '<p style="text-align: center; color: #787c7e;">No matchups yet</p>';
+            } else {
+                matchupsList.innerHTML = stats.matchups.map(matchup => {
+                    const isTie = matchup.result === 'tie';
+                    const p1Won = matchup.result.startsWith('p1-win');
+                    const p2Won = matchup.result.startsWith('p2-win');
+                    const isTiebreaker = matchup.result.endsWith('-tie');
+
+                    return `
+                        <div class="matchup-item">
+                            <div style="text-align: left;">
+                                <div class="matchup-score ${p1Won ? 'winner' : (isTie ? 'tie' : 'loser')}">
+                                    ${matchup.p1Guesses === Infinity ? 'X' : matchup.p1Guesses}/6
+                                </div>
+                                <div class="matchup-details">
+                                    🟩${matchup.p1Score.green} 🟨${matchup.p1Score.yellow}
+                                </div>
+                            </div>
+                            <div class="matchup-date">
+                                ${formatDate(matchup.date)}
+                                ${isTiebreaker ? '<div style="font-size: 10px; color: #c9b458;">*tiebreaker</div>' : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="matchup-score ${p2Won ? 'winner' : (isTie ? 'tie' : 'loser')}">
+                                    ${matchup.p2Guesses === Infinity ? 'X' : matchup.p2Guesses}/6
+                                </div>
+                                <div class="matchup-details">
+                                    🟩${matchup.p2Score.green} 🟨${matchup.p2Score.yellow}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, doc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyANQVhxx3zaXrW5g8nMFewLvLUQvNZhjXQ",
+          authDomain: "wordle-bud.firebaseapp.com",
+          projectId: "wordle-bud",
+          storageBucket: "wordle-bud.firebasestorage.app",
+          messagingSenderId: "3991484624",
+          appId: "1:3991484624:web:dcefe2846c3e5aad8c06d5",
+          measurementId: "G-QZSSYLP05D"
+        };
+
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+            showMessage('Failed to connect to server. Please refresh the page.', 'error');
+        }
+
+        // Global state
+        window.roomData = null;
+
+        // Initialize and load data
+        initializeData();
+
+        async function initializeData() {
+            const ROOM_CODE = 'GLOBAL';
+            const roomRef = doc(db, 'rooms', ROOM_CODE);
+
+            try {
+                const roomSnap = await getDoc(roomRef);
+
+                if (!roomSnap.exists()) {
+                    showMessage('No data available yet. Submit some scores first!', 'info');
+                    return;
+                }
+
+                // Subscribe to room updates
+                onSnapshot(roomRef, (doc) => {
+                    window.roomData = doc.data();
+                    populatePlayerDropdowns();
+
+                    // If players are already selected, update the comparison
+                    const player1 = document.getElementById('player1Select').value;
+                    const player2 = document.getElementById('player2Select').value;
+                    if (player1 && player2 && player1 !== player2) {
+                        comparePlayers();
+                    }
+                });
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showMessage('Failed to load data. Please refresh the page.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
