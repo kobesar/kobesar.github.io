@@ -117,10 +117,30 @@
             margin-top: 30px;
         }
 
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
         .leaderboard h2 {
             font-size: 20px;
-            margin-bottom: 16px;
+            margin: 0;
             text-align: center;
+            flex-grow: 1;
+        }
+
+        .h2h-link {
+            color: #6aaa64;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .h2h-link:hover {
+            text-decoration: underline;
         }
 
         .leaderboard-table {
@@ -335,7 +355,10 @@ Wordle 1,234 3/6
             <button onclick="submitScore()" id="submitBtn">Submit Score</button>
 
             <div class="leaderboard">
-                <h2>🏆 All-Time Leaderboard</h2>
+                <div class="leaderboard-header">
+                    <h2>🏆 All-Time Leaderboard</h2>
+                    <a href="head-to-head.html" class="h2h-link">Head-to-Head →</a>
+                </div>
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
