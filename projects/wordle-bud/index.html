@@ -185,6 +185,116 @@
             background-color: #fff8e1;
         }
 
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .view-toggle button {
+            padding: 8px 16px;
+            font-size: 14px;
+            background-color: white;
+            border: 1px solid #d3d6da;
+            color: #787c7e;
+            cursor: pointer;
+            font-weight: 600;
+            width: auto;
+            margin: 0;
+        }
+
+        .view-toggle button.active {
+            background-color: #6aaa64;
+            color: white;
+            border-color: #6aaa64;
+        }
+
+        .view-toggle button:hover:not(.active) {
+            background-color: #f6f7f8;
+        }
+
+        /* Matrix View */
+        .matrix-container {
+            overflow-x: auto;
+            display: none;
+        }
+
+        .matrix-container.active {
+            display: block;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 8px;
+            text-align: center;
+            border: 1px solid #d3d6da;
+            min-width: 60px;
+        }
+
+        .matrix-table th {
+            background-color: #f6f7f8;
+            font-weight: 700;
+            position: sticky;
+            z-index: 1;
+        }
+
+        .matrix-table th:first-child {
+            left: 0;
+            z-index: 2;
+        }
+
+        .matrix-table tbody th {
+            background-color: #f6f7f8;
+            font-weight: 600;
+            text-align: left;
+            position: sticky;
+            left: 0;
+        }
+
+        .matrix-table .self-cell {
+            background-color: #e8e8e8;
+            color: #d3d6da;
+        }
+
+        .matrix-table .winning-record {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: 600;
+        }
+
+        .matrix-table .losing-record {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: 600;
+        }
+
+        .matrix-table .tied-record {
+            background-color: #fff3cd;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .matrix-table .no-matchup {
+            background-color: #fafafa;
+            color: #d3d6da;
+        }
+
+        .leaderboard-view {
+            display: block;
+        }
+
+        .leaderboard-view.hidden {
+            display: none;
+        }
+
         .daily-results {
             margin-top: 30px;
         }
@@ -359,17 +469,30 @@ Wordle 1,234 3/6
                     <h2>🏆 All-Time Leaderboard</h2>
                     <a href="head-to-head.html" class="h2h-link">Head-to-Head →</a>
                 </div>
-                <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th class="rank">#</th>
-                            <th>Player</th>
-                            <th class="wins">Wins</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardBody">
-                    </tbody>
-                </table>
+
+                <div class="view-toggle">
+                    <button class="active" onclick="switchLeaderboardView('list')">List View</button>
+                    <button onclick="switchLeaderboardView('matrix')">Matrix View</button>
+                </div>
+
+                <div class="leaderboard-view" id="listView">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th class="rank">#</th>
+                                <th>Player</th>
+                                <th class="wins">Wins</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="matrix-container" id="matrixView">
+                    <table class="matrix-table" id="matrixTable">
+                    </table>
+                </div>
             </div>
 
             <div class="daily-results">
@@ -590,7 +713,27 @@ Wordle 1,234 3/6
 
         function updateUI() {
             updateLeaderboard();
+            updateMatrixView();
             updateDailyResults();
+        }
+
+        function switchLeaderboardView(view) {
+            const listView = document.getElementById('listView');
+            const matrixView = document.getElementById('matrixView');
+            const buttons = document.querySelectorAll('.view-toggle button');
+
+            if (view === 'list') {
+                listView.classList.remove('hidden');
+                matrixView.classList.remove('active');
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                listView.classList.add('hidden');
+                matrixView.classList.add('active');
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+                updateMatrixView();
+            }
         }
 
         function updateLeaderboard() {
@@ -622,6 +765,110 @@ Wordle 1,234 3/6
                     <td class="wins">${player.totalWins || 0}</td>
                 `;
             });
+        }
+
+        function updateMatrixView() {
+            const room = window.roomData;
+            if (!room || !room.players) return;
+
+            const players = Object.keys(room.players).sort();
+            if (players.length === 0) return;
+
+            // Calculate all head-to-head records
+            const h2hRecords = {};
+            players.forEach(p1 => {
+                h2hRecords[p1] = {};
+                players.forEach(p2 => {
+                    h2hRecords[p1][p2] = { wins: 0, losses: 0, ties: 0 };
+                });
+            });
+
+            // Analyze daily scores
+            const dailyScores = room.dailyScores || {};
+            for (let date in dailyScores) {
+                const dayData = dailyScores[date];
+
+                // Compare each pair of players who played that day
+                for (let i = 0; i < players.length; i++) {
+                    for (let j = 0; j < players.length; j++) {
+                        if (i === j) continue;
+
+                        const p1 = players[i];
+                        const p2 = players[j];
+                        const p1Score = dayData[p1];
+                        const p2Score = dayData[p2];
+
+                        if (p1Score && p2Score) {
+                            const p1Guesses = p1Score.guesses === 'X' ? Infinity : parseInt(p1Score.guesses);
+                            const p2Guesses = p2Score.guesses === 'X' ? Infinity : parseInt(p2Score.guesses);
+
+                            if (p1Guesses < p2Guesses) {
+                                h2hRecords[p1][p2].wins++;
+                            } else if (p2Guesses < p1Guesses) {
+                                h2hRecords[p1][p2].losses++;
+                            } else {
+                                // Tiebreaker
+                                if (p1Score.tileScore > p2Score.tileScore) {
+                                    h2hRecords[p1][p2].wins++;
+                                } else if (p2Score.tileScore > p1Score.tileScore) {
+                                    h2hRecords[p1][p2].losses++;
+                                } else {
+                                    h2hRecords[p1][p2].ties++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Build matrix table
+            const matrixTable = document.getElementById('matrixTable');
+            let html = '<thead><tr><th></th>';
+
+            // Header row with player names
+            players.forEach(player => {
+                html += `<th title="${player}">${truncateName(player, 8)}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            // Data rows
+            players.forEach(rowPlayer => {
+                html += `<tr><th title="${rowPlayer}">${truncateName(rowPlayer, 12)}</th>`;
+
+                players.forEach(colPlayer => {
+                    if (rowPlayer === colPlayer) {
+                        html += '<td class="self-cell">—</td>';
+                    } else {
+                        const record = h2hRecords[rowPlayer][colPlayer];
+                        const total = record.wins + record.losses + record.ties;
+
+                        if (total === 0) {
+                            html += '<td class="no-matchup">—</td>';
+                        } else {
+                            let cellClass = '';
+                            if (record.wins > record.losses) {
+                                cellClass = 'winning-record';
+                            } else if (record.losses > record.wins) {
+                                cellClass = 'losing-record';
+                            } else {
+                                cellClass = 'tied-record';
+                            }
+
+                            html += `<td class="${cellClass}" title="${rowPlayer} vs ${colPlayer}: ${record.wins}-${record.losses}${record.ties > 0 ? '-' + record.ties : ''}">${record.wins}-${record.losses}${record.ties > 0 ? '-' + record.ties : ''}</td>`;
+                        }
+                    }
+                });
+
+                html += '</tr>';
+            });
+
+            html += '</tbody>';
+            matrixTable.innerHTML = html;
+        }
+
+        function truncateName(name, maxLength) {
+            if (name.length <= maxLength) return name;
+            return name.substring(0, maxLength - 1) + '…';
         }
 
         function updateDailyResults() {
