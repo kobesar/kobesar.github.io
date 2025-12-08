@@ -537,7 +537,7 @@ Wordle 1,234 3/6
 
             let winner = null;
             let bestGuesses = Infinity;
-            let bestTileScore = -1;
+            let bestGreenCount = Infinity;
             let isTiebreaker = false;
 
             // Find winner
@@ -550,12 +550,13 @@ Wordle 1,234 3/6
                 if (guesses < bestGuesses) {
                     winner = player;
                     bestGuesses = guesses;
-                    bestTileScore = score.tileScore;
+                    bestGreenCount = score.green;
                     isTiebreaker = false;
                 } else if (guesses === bestGuesses && guesses !== Infinity) {
-                    if (score.tileScore > bestTileScore) {
+                    // Tiebreaker: fewer greens wins (more skillful)
+                    if (score.green < bestGreenCount) {
                         winner = player;
-                        bestTileScore = score.tileScore;
+                        bestGreenCount = score.green;
                         isTiebreaker = true;
                     }
                 }
@@ -666,15 +667,18 @@ Wordle 1,234 3/6
                                 h2hRecords[p1][p2].wins++;
                             } else if (p2Guesses < p1Guesses) {
                                 h2hRecords[p1][p2].losses++;
-                            } else {
-                                // Tiebreaker
-                                if (p1Score.tileScore > p2Score.tileScore) {
+                            } else if (p1Guesses !== Infinity) {
+                                // Tiebreaker: fewer greens wins (more skillful)
+                                if (p1Score.green < p2Score.green) {
                                     h2hRecords[p1][p2].wins++;
-                                } else if (p2Score.tileScore > p1Score.tileScore) {
+                                } else if (p2Score.green < p1Score.green) {
                                     h2hRecords[p1][p2].losses++;
                                 } else {
                                     h2hRecords[p1][p2].ties++;
                                 }
+                            } else {
+                                // Both got X - it's a tie
+                                h2hRecords[p1][p2].ties++;
                             }
                         }
                     }
