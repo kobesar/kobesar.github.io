@@ -459,18 +459,22 @@
                     } else if (p2Guesses < p1Guesses) {
                         p2Wins++;
                         result = 'p2-win';
-                    } else {
-                        // Tiebreaker - check tile score
-                        if (p1Score.tileScore > p2Score.tileScore) {
+                    } else if (p1Guesses !== Infinity) {
+                        // Tiebreaker: fewer greens wins (more skillful)
+                        if (p1Score.green < p2Score.green) {
                             p1Wins++;
                             result = 'p1-win-tie';
-                        } else if (p2Score.tileScore > p1Score.tileScore) {
+                        } else if (p2Score.green < p1Score.green) {
                             p2Wins++;
                             result = 'p2-win-tie';
                         } else {
                             ties++;
                             result = 'tie';
                         }
+                    } else {
+                        // Both got X - it's a tie
+                        ties++;
+                        result = 'tie';
                     }
 
                     matchups.push({
