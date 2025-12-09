@@ -210,6 +210,30 @@
             color: #d3d6da;
         }
 
+        .h2h-player.winner {
+            color: #6aaa64;
+        }
+
+        .h2h-player.loser {
+            color: #787c7e;
+        }
+
+        .h2h-player.tie {
+            color: #c9b458;
+        }
+
+        .matrix-table tbody tr {
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .matrix-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .matrix-table tbody td {
+            padding: 12px 8px;
+        }
+
         .daily-results {
             margin-top: 30px;
         }
@@ -623,12 +647,76 @@ Wordle 1,234 3/6
             submitBtn.textContent = 'Submit Score';
         }
 
+        async function recalculateAllWinners() {
+            const room = window.roomData;
+            if (!room || !room.dailyScores) return;
+
+            const roomRef = window.firestoreFunctions.doc(window.db, 'rooms', 'GLOBAL');
+            const updates = {};
+
+            // Recalculate winner for each day
+            for (let date in room.dailyScores) {
+                const dayScores = room.dailyScores[date];
+                let winner = null;
+                let bestGuesses = Infinity;
+                let bestGreenCount = Infinity;
+                let isTiebreaker = false;
+
+                for (let player in dayScores) {
+                    if (player.startsWith('_')) continue;
+
+                    const score = dayScores[player];
+                    const guesses = score.guesses === 'X' ? Infinity : parseInt(score.guesses);
+
+                    if (guesses < bestGuesses) {
+                        winner = player;
+                        bestGuesses = guesses;
+                        bestGreenCount = score.green;
+                        isTiebreaker = false;
+                    } else if (guesses === bestGuesses && guesses !== Infinity) {
+                        // Tiebreaker: fewer greens wins (more skillful)
+                        if (score.green < bestGreenCount) {
+                            winner = player;
+                            bestGreenCount = score.green;
+                            isTiebreaker = true;
+                        }
+                    }
+                }
+
+                updates[`dailyScores.${date}._winner`] = winner;
+                updates[`dailyScores.${date}._isTiebreaker`] = isTiebreaker;
+            }
+
+            // Update all winners at once
+            if (Object.keys(updates).length > 0) {
+                await window.firestoreFunctions.updateDoc(roomRef, updates);
+            }
+
+            // Recalculate total wins
+            const allWins = {};
+            for (let date in room.dailyScores) {
+                const winner = updates[`dailyScores.${date}._winner`];
+                if (winner) {
+                    allWins[winner] = (allWins[winner] || 0) + 1;
+                }
+            }
+
+            const winUpdates = {};
+            for (let player in room.players) {
+                winUpdates[`players.${player}.totalWins`] = allWins[player] || 0;
+            }
+
+            if (Object.keys(winUpdates).length > 0) {
+                await window.firestoreFunctions.updateDoc(roomRef, winUpdates);
+            }
+        }
+
         function updateUI() {
-            updateMatrixView();
+            updateH2HTable();
             updateDailyResults();
         }
 
-        function updateMatrixView() {
+        function updateH2HTable() {
             const room = window.roomData;
             if (!room || !room.players) return;
 
@@ -636,26 +724,23 @@ Wordle 1,234 3/6
             if (players.length === 0) return;
 
             // Calculate all head-to-head records
-            const h2hRecords = {};
-            players.forEach(p1 => {
-                h2hRecords[p1] = {};
-                players.forEach(p2 => {
-                    h2hRecords[p1][p2] = { wins: 0, losses: 0, ties: 0 };
-                });
-            });
+            const h2hPairings = [];
 
-            // Analyze daily scores
+            // Analyze daily scores and create unique pairings
             const dailyScores = room.dailyScores || {};
-            for (let date in dailyScores) {
-                const dayData = dailyScores[date];
 
-                // Compare each pair of players who played that day
-                for (let i = 0; i < players.length; i++) {
-                    for (let j = 0; j < players.length; j++) {
-                        if (i === j) continue;
+            // Create unique pairings
+            for (let i = 0; i < players.length; i++) {
+                for (let j = i + 1; j < players.length; j++) {
+                    const p1 = players[i];
+                    const p2 = players[j];
+                    let p1Wins = 0;
+                    let p2Wins = 0;
+                    let ties = 0;
 
-                        const p1 = players[i];
-                        const p2 = players[j];
+                    // Compare for each day both played
+                    for (let date in dailyScores) {
+                        const dayData = dailyScores[date];
                         const p1Score = dayData[p1];
                         const p2Score = dayData[p2];
 
@@ -664,83 +749,80 @@ Wordle 1,234 3/6
                             const p2Guesses = p2Score.guesses === 'X' ? Infinity : parseInt(p2Score.guesses);
 
                             if (p1Guesses < p2Guesses) {
-                                h2hRecords[p1][p2].wins++;
+                                p1Wins++;
                             } else if (p2Guesses < p1Guesses) {
-                                h2hRecords[p1][p2].losses++;
+                                p2Wins++;
                             } else if (p1Guesses !== Infinity) {
                                 // Tiebreaker: fewer greens wins (more skillful)
                                 if (p1Score.green < p2Score.green) {
-                                    h2hRecords[p1][p2].wins++;
+                                    p1Wins++;
                                 } else if (p2Score.green < p1Score.green) {
-                                    h2hRecords[p1][p2].losses++;
+                                    p2Wins++;
                                 } else {
-                                    h2hRecords[p1][p2].ties++;
+                                    ties++;
                                 }
                             } else {
                                 // Both got X - it's a tie
-                                h2hRecords[p1][p2].ties++;
+                                ties++;
                             }
                         }
+                    }
+
+                    // Only add pairing if they've played against each other
+                    const total = p1Wins + p2Wins + ties;
+                    if (total > 0) {
+                        h2hPairings.push({
+                            p1,
+                            p2,
+                            p1Wins,
+                            p2Wins,
+                            ties,
+                            total
+                        });
                     }
                 }
             }
 
-            // Build matrix table
+            // Build h2h table
             const matrixTable = document.getElementById('matrixTable');
-            let html = '<thead><tr><th></th>';
 
-            // Header row with player names
-            players.forEach(player => {
-                html += `<th title="${player}">${truncateName(player, 8)}</th>`;
-            });
-            html += '</tr></thead><tbody>';
+            if (h2hPairings.length === 0) {
+                matrixTable.innerHTML = '<tbody><tr><td style="text-align: center; padding: 20px; color: #787c7e;">No head-to-head matchups yet</td></tr></tbody>';
+                return;
+            }
 
-            // Data rows
-            players.forEach(rowPlayer => {
-                html += `<tr><th title="${rowPlayer}">${truncateName(rowPlayer, 12)}</th>`;
+            let html = '<thead><tr><th style="text-align: left;">Player 1</th><th style="text-align: center;">Record</th><th style="text-align: right;">Player 2</th></tr></thead><tbody>';
 
-                players.forEach(colPlayer => {
-                    if (rowPlayer === colPlayer) {
-                        html += '<td class="self-cell">—</td>';
-                    } else {
-                        const record = h2hRecords[rowPlayer][colPlayer];
-                        const total = record.wins + record.losses + record.ties;
+            h2hPairings.forEach(pairing => {
+                const { p1, p2, p1Wins, p2Wins, ties } = pairing;
 
-                        if (total === 0) {
-                            html += '<td class="no-matchup">—</td>';
-                        } else {
-                            let cellClass = '';
-                            let displayText = '';
-                            if (record.wins > record.losses) {
-                                cellClass = 'winning-record';
-                                displayText = `${record.wins}W-${record.losses}L`;
-                            } else if (record.losses > record.wins) {
-                                cellClass = 'losing-record';
-                                displayText = `${record.wins}W-${record.losses}L`;
-                            } else {
-                                cellClass = 'tied-record';
-                                displayText = `${record.wins}W-${record.losses}L`;
-                            }
+                // Determine who is winning
+                let p1Class = '';
+                let p2Class = '';
+                if (p1Wins > p2Wins) {
+                    p1Class = 'winner';
+                    p2Class = 'loser';
+                } else if (p2Wins > p1Wins) {
+                    p1Class = 'loser';
+                    p2Class = 'winner';
+                } else {
+                    p1Class = 'tie';
+                    p2Class = 'tie';
+                }
 
-                            if (record.ties > 0) {
-                                displayText += `-${record.ties}T`;
-                            }
+                const recordText = `${p1Wins}W - ${p2Wins}L${ties > 0 ? ' - ' + ties + 'T' : ''}`;
 
-                            html += `<td class="${cellClass}" title="${rowPlayer} vs ${colPlayer}: ${record.wins} wins, ${record.losses} losses${record.ties > 0 ? ', ' + record.ties + ' ties' : ''}">${displayText}</td>`;
-                        }
-                    }
-                });
-
-                html += '</tr>';
+                html += `
+                    <tr>
+                        <td class="h2h-player ${p1Class}" style="text-align: left; font-weight: 600;">${p1}</td>
+                        <td style="text-align: center; font-weight: 700; font-size: 14px;">${recordText}</td>
+                        <td class="h2h-player ${p2Class}" style="text-align: right; font-weight: 600;">${p2}</td>
+                    </tr>
+                `;
             });
 
             html += '</tbody>';
             matrixTable.innerHTML = html;
-        }
-
-        function truncateName(name, maxLength) {
-            if (name.length <= maxLength) return name;
-            return name.substring(0, maxLength - 1) + '…';
         }
 
         function updateDailyResults() {
@@ -872,8 +954,16 @@ Wordle 1,234 3/6
                 }
 
                 // Subscribe to room updates
-                window.unsubscribeRoom = onSnapshot(roomRef, (doc) => {
+                let isFirstLoad = true;
+                window.unsubscribeRoom = onSnapshot(roomRef, async (doc) => {
                     window.roomData = doc.data();
+
+                    // Recalculate all winners on first load to fix any historical data
+                    if (isFirstLoad) {
+                        isFirstLoad = false;
+                        await recalculateAllWinners();
+                    }
+
                     updateUI();
                     checkTodaySubmission();
                 });
