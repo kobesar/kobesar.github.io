@@ -710,15 +710,23 @@ Wordle 1,234 3/6
                             html += '<td class="no-matchup">—</td>';
                         } else {
                             let cellClass = '';
+                            let displayText = '';
                             if (record.wins > record.losses) {
                                 cellClass = 'winning-record';
+                                displayText = `${record.wins}W-${record.losses}L`;
                             } else if (record.losses > record.wins) {
                                 cellClass = 'losing-record';
+                                displayText = `${record.wins}W-${record.losses}L`;
                             } else {
                                 cellClass = 'tied-record';
+                                displayText = `${record.wins}W-${record.losses}L`;
                             }
 
-                            html += `<td class="${cellClass}" title="${rowPlayer} vs ${colPlayer}: ${record.wins}-${record.losses}${record.ties > 0 ? '-' + record.ties : ''}">${record.wins}-${record.losses}${record.ties > 0 ? '-' + record.ties : ''}</td>`;
+                            if (record.ties > 0) {
+                                displayText += `-${record.ties}T`;
+                            }
+
+                            html += `<td class="${cellClass}" title="${rowPlayer} vs ${colPlayer}: ${record.wins} wins, ${record.losses} losses${record.ties > 0 ? ', ' + record.ties + ' ties' : ''}">${displayText}</td>`;
                         }
                     }
                 });
