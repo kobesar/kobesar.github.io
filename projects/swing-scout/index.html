@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Swing Scout — AI Golf Swing Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green-deep: #2d6a4f;
+      --green-light: #52b788;
+      --gold: #d4a037;
+      --red: #c1121f;
+      --bg-cream: #f8f6f1;
+      --bg-mid: #eae7df;
+      --bg-green-tint: #dfe8df;
+      --border: #e2ddd5;
+      --text-primary: #1a1a1a;
+      --text-secondary: #4a5568;
+      --text-muted: #9ca3af;
+      --radius: 14px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(170deg, var(--bg-cream), var(--bg-mid), var(--bg-green-tint));
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 800; }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .app-header h1 {
+      font-size: 2.25rem;
+      color: var(--green-deep);
+      margin-bottom: 0.25rem;
+    }
+
+    .app-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+
+    /* API Key */
+    .api-section label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .api-section input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .api-section input:focus { border-color: var(--green-deep); }
+
+    .api-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .api-note a { color: var(--green-deep); }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fefefe;
+    }
+
+    .upload-zone.drag-over {
+      border-color: var(--green-deep);
+      background: #f0f7f2;
+    }
+
+    .upload-zone .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .upload-zone .label { font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem; }
+    .upload-zone .hint { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* Preview */
+    #preview-state { display: none; }
+
+    .preview-img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .btn-row { display: flex; gap: 0.75rem; }
+
+    .btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--green-deep);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* Loading */
+    #loading-state { display: none; text-align: center; padding: 3rem 1rem; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--green-deep);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading-state .label { font-weight: 600; margin-bottom: 0.25rem; }
+    #loading-state .hint { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Error */
+    .error-msg {
+      display: none;
+      background: #fef2f2;
+      color: var(--red);
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Results */
+    #results-state { display: none; }
+
+    .overall-card {
+      background: var(--green-deep);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 2rem 1.75rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .overall-card .bg-emoji {
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      font-size: 7rem;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+
+    .overall-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      font-size: 1.75rem;
+      font-weight: 800;
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.5rem;
+    }
+
+    .overall-card .rating-label {
+      font-size: 0.82rem;
+      opacity: 0.75;
+      margin-bottom: 0.75rem;
+    }
+
+    .overall-card .summary {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      opacity: 0.92;
+    }
+
+    /* Score Bars */
+    .score-bars { display: flex; flex-direction: column; gap: 0.85rem; }
+
+    .score-bar-row label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    .score-bar-track {
+      height: 8px;
+      background: #f0ede8;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Detail Cards */
+    .detail-card { margin-bottom: 0.75rem; }
+
+    .detail-card .header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .detail-card .header .emoji { font-size: 1.25rem; }
+
+    .detail-card .header h3 {
+      font-size: 1rem;
+      flex: 1;
+    }
+
+    .detail-card .score-badge {
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.15rem 0.6rem;
+      border-radius: 6px;
+      background: #f0f7f2;
+    }
+
+    .detail-card .observation {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .tip-box {
+      background: #f0f7f2;
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 0.88rem;
+      color: var(--green-deep);
+    }
+
+    /* Priorities */
+    .priorities-card {
+      background: #fef9ee;
+      border: 1px solid #f5e6c4;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .priorities-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .priorities-card ol {
+      padding-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .priorities-card li {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="app-header">
+      <h1>Swing Scout</h1>
+      <p>AI-powered golf swing analysis</p>
+    </div>
+
+    <!-- API Key -->
+    <div class="card api-section">
+      <label for="api-key">Anthropic API Key</label>
+      <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off">
+      <p class="api-note">
+        Your key stays in your browser and is never stored.
+        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get a key &rarr;</a>
+      </p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- Upload State -->
+    <div class="card" id="upload-state">
+      <div class="upload-zone" id="upload-zone">
+        <div class="icon">&#9971;</div>
+        <div class="label">Drop your swing photo here</div>
+        <div class="hint">or click to browse &middot; JPG, PNG, WEBP</div>
+      </div>
+      <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" hidden>
+    </div>
+
+    <!-- Preview State -->
+    <div class="card" id="preview-state">
+      <img id="preview-img" class="preview-img" alt="Swing preview">
+      <div class="btn-row">
+        <button class="btn btn-primary" id="analyze-btn">Analyze My Swing</button>
+        <button class="btn btn-secondary" id="change-btn">Change Photo</button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="card" id="loading-state">
+      <div class="spinner"></div>
+      <div class="label">Analyzing your swing&hellip;</div>
+      <div class="hint">Checking stance, grip, posture &amp; mechanics</div>
+    </div>
+
+    <!-- Results State -->
+    <div id="results-state"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const show = el => el.style.display = '';
+    const hide = el => el.style.display = 'none';
+
+    let imageBase64 = null;
+    let imageMediaType = null;
+
+    const uploadZone = $('upload-zone');
+    const fileInput = $('file-input');
+    const previewImg = $('preview-img');
+    const errorMsg = $('error-msg');
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      show(errorMsg);
+    }
+
+    function hideError() { hide(errorMsg); }
+
+    function setState(state) {
+      hide($('upload-state'));
+      hide($('preview-state'));
+      hide($('loading-state'));
+      hide($('results-state'));
+      if (state === 'upload') show($('upload-state'));
+      else if (state === 'preview') show($('preview-state'));
+      else if (state === 'loading') show($('loading-state'));
+      else if (state === 'results') show($('results-state'));
+    }
+
+    // File handling
+    uploadZone.addEventListener('click', () => fileInput.click());
+
+    uploadZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) handleFile(fileInput.files[0]);
+    });
+
+    function handleFile(file) {
+      if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+        showError('Please upload a JPG, PNG, or WEBP image.');
+        return;
+      }
+      hideError();
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        previewImg.src = dataUrl;
+        imageMediaType = file.type;
+        imageBase64 = dataUrl.split(',')[1];
+        setState('preview');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    $('change-btn').addEventListener('click', reset);
+    $('analyze-btn').addEventListener('click', analyze);
+
+    function reset() {
+      imageBase64 = null;
+      imageMediaType = null;
+      fileInput.value = '';
+      hideError();
+      setState('upload');
+    }
+
+    function scoreColor(n) {
+      n = Number(n);
+      if (n >= 8) return var_green_deep();
+      if (n >= 6) return '#52b788';
+      if (n >= 4) return '#d4a037';
+      return '#c1121f';
+    }
+
+    function var_green_deep() { return '#2d6a4f'; }
+
+    const CATEGORIES = [
+      { key: 'stance',    emoji: '🦶', label: 'Stance' },
+      { key: 'grip',      emoji: '🤝', label: 'Grip' },
+      { key: 'backswing', emoji: '🔄', label: 'Backswing' },
+      { key: 'downswing', emoji: '⚡', label: 'Downswing' },
+      { key: 'posture',   emoji: '🧍', label: 'Posture' },
+      { key: 'balance',   emoji: '⚖️', label: 'Balance' },
+    ];
+
+    const SYSTEM_PROMPT = `You are an expert golf swing analyst and PGA-level instructor. Analyze the uploaded image of a golf swing and provide detailed, actionable feedback.
+
+Structure your response EXACTLY as JSON with this format (no markdown, no backticks):
+{
+  "overall_rating": "A number 1-10",
+  "stance": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "grip": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "backswing": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "downswing": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "posture": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "balance": { "score": "1-10", "observation": "What you see", "tip": "How to improve" },
+  "summary": "2-3 sentence overall assessment",
+  "top_priorities": ["Priority 1", "Priority 2", "Priority 3"]
+}
+
+If the image is not a golf swing, return: {"error": "Please upload an image of a golf swing for analysis."}
+
+Be encouraging but honest. Tailor tips to what you can observe in the specific phase of the swing shown.`;
+
+    async function analyze() {
+      const apiKey = $('api-key').value.trim();
+      if (!apiKey) { showError('Please enter your Anthropic API key.'); return; }
+      hideError();
+      setState('loading');
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            system: SYSTEM_PROMPT,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image', source: { type: 'base64', media_type: imageMediaType, data: imageBase64 } },
+                { type: 'text', text: 'Analyze this golf swing image and return your structured JSON assessment.' }
+              ]
+            }]
+          })
+        });
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          const msg = errBody?.error?.message || `API error (${res.status})`;
+          throw new Error(msg);
+        }
+
+        const body = await res.json();
+        const text = body.content?.[0]?.text || '';
+        const data = JSON.parse(text);
+
+        if (data.error) {
+          showError(data.error);
+          setState('preview');
+          return;
+        }
+
+        renderResults(data);
+        setState('results');
+      } catch (err) {
+        showError(err.message || 'Analysis failed. Please try again.');
+        setState('preview');
+      }
+    }
+
+    function renderResults(data) {
+      const el = $('results-state');
+
+      // Overall card
+      let html = `
+        <div class="overall-card">
+          <span class="bg-emoji">⛳</span>
+          <div class="overall-badge">${data.overall_rating}</div>
+          <div class="rating-label">Overall Rating / out of 10</div>
+          <div class="summary">${esc(data.summary)}</div>
+        </div>`;
+
+      // Score bars
+      html += `<div class="card"><div class="score-bars">`;
+      for (const cat of CATEGORIES) {
+        const s = Number(data[cat.key]?.score || 0);
+        const c = scoreColor(s);
+        html += `
+          <div class="score-bar-row">
+            <label><span>${cat.label}</span><span style="color:${c}">${s}</span></label>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" data-width="${s * 10}%" style="background:${c}"></div>
+            </div>
+          </div>`;
+      }
+      html += `</div></div>`;
+
+      // Detail cards
+      for (const cat of CATEGORIES) {
+        const d = data[cat.key] || {};
+        const s = Number(d.score || 0);
+        html += `
+          <div class="card detail-card">
+            <div class="header">
+              <span class="emoji">${cat.emoji}</span>
+              <h3>${cat.label}</h3>
+              <span class="score-badge" style="color:${scoreColor(s)}">${s}/10</span>
+            </div>
+            <p class="observation">${esc(d.observation || '')}</p>
+            <div class="tip-box">💡 ${esc(d.tip || '')}</div>
+          </div>`;
+      }
+
+      // Priorities
+      const priorities = data.top_priorities || [];
+      html += `
+        <div class="priorities-card">
+          <h3>🎯 Top Priorities</h3>
+          <ol>${priorities.map(p => `<li>${esc(p)}</li>`).join('')}</ol>
+        </div>`;
+
+      // Reset button
+      html += `<button class="btn btn-primary" style="width:100%" onclick="reset()">Analyze Another Swing</button>`;
+
+      el.innerHTML = html;
+
+      // Animate bars
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.querySelectorAll('.score-bar-fill').forEach(bar => {
+            bar.style.width = bar.dataset.width;
+          });
+        });
+      });
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    // Initial state
+    setState('upload');
+  </script>
+</body>
+</html>
