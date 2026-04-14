@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hall of Fame?</title>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-path@3"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div id="tooltip"></div>
+  <div id="graphic">
+    <div id="sections">
+
+      <section class="step">
+        <div class="title"></div>
+        <br><br>
+        <h1>What makes a Hall of Famer, a Hall of Famer?</h1>
+        <p>
+          There are around 23,000 players that have played in the MLB, and surprisingly not all make
+          it to the Hall of Fame &mdash; it is considered a life achievement, after all. So, who in the hell makes it? Is it juiced-up ARod or diligent players like Ichiro?
+        </p>
+        <p>
+          In this report we use <strong>logistic regression</strong> to uncover what kind of factors go into deciding whether or not a player is inducted into the Hall of Fame.
+        </p>
+        <h2>So, who are these hall of famers?</h2>
+      </section>
+
+      <section class="step">
+        <p>
+          Of the 23,000 MLB players, roughly 5,000 are eligible. <a class="desc">Players must have played 10 seasons of Major League Baseball and have been retired for five full seasons to be considered eligible.</a>
+        </p>
+      </section>
+
+      <section class="step">
+        <p>
+          Of those 5,000 eligible players, only <strong>330</strong> have ever been voted into the Hall of Fame &mdash; about 6.6% of eligible players make it through.
+        </p>
+        <h3>And only about 1% of all players who've ever played.</h3>
+      </section>
+
+      <section class="step">
+        <p>
+          So who are these 330? Let's pull them out of the pile and put them on the field &mdash; position players on the left, pitchers on the right, sized by career <strong>WAR</strong> (Wins Above Replacement).
+        </p>
+      </section>
+
+      <section class="step">
+        <p>
+          A handful of all-time greats dominate the outer edges &mdash; Ruth, Bonds, Mays, Clemens &mdash; but the bulk of inductees cluster around a much more ordinary level of production. Career stats alone don't tell the whole story. So what <em>does</em> the model say matters?
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>All-Star selections matter &mdash; a lot.</h2>
+        <p>
+          In both of our final models, each additional <strong>All-Star</strong> selection multiplies a player's odds of induction by roughly <strong>3.3&times;</strong> (pitchers) to <strong>3.75&times;</strong> (position players), holding everything else constant. Consistent All-Star appearances are the single strongest predictor we found &mdash; a feedback loop where accolades during a career beget accolades after it.
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>For pitchers: wins still rule.</h2>
+        <p>
+          Each additional career <strong>win</strong> raises a pitcher's odds of induction by about <strong>18%</strong> (OR 1.183, 95% CI [1.081, 1.388]). Counting stats are fading in modern analysis, but the voters are still counting.
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>Position player model &mdash; odds ratios.</h2>
+        <p>
+          The largest effects in the position player model. An odds ratio above 1 increases induction chances; the bars show 95% confidence intervals on a log scale.
+        </p>
+        <p class="desc">
+          The Veterans Committee effect is enormous but unstable &mdash; the committee considers very few players and inducts almost all of them, which creates near-perfect separation in the model.
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>Pitcher model &mdash; odds ratios.</h2>
+        <p>
+          Same view for the pitcher model. Wins, All-Star selections, and the Veterans Committee dominate.
+        </p>
+      </section>
+
+      <section class="step">
+        <h2>Who the model disagrees with.</h2>
+        <p>
+          The models aren't perfect &mdash; precision and recall both sit below 50% on our held-out test set. A few cases the model gets "wrong" are revealing:
+        </p>
+        <ul>
+          <li><strong>Adrian Beltr&eacute;</strong> and <strong>Yadier Molina</strong> &mdash; predicted unlikely, but near-locks to voters.</li>
+          <li><strong>Joe Torre</strong> &mdash; inducted for managing, not his playing stats.</li>
+          <li><strong>Curt Schilling</strong> &mdash; strong stats, but character concerns kept him out.</li>
+        </ul>
+        <p>
+          The model sees counting stats and awards. It can't see reputation, narrative, or a voter's grudge.
+        </p>
+      </section>
+
+      <section class="step">
+        <h1>The End</h1>
+        <p>
+          Try our interactive prediction app: <a href="https://klobby19.shinyapps.io/explorable/" target="_blank">klobby19.shinyapps.io/explorable</a>.
+        </p>
+        <p class="desc">
+          Built from the STAT 423 final project (Kobe Sarausad, Dante Renteria, Andy, Kai). Source: <a href="https://github.com/danter2000/STAT423-Project" target="_blank">github.com/danter2000/STAT423-Project</a>.
+        </p>
+      </section>
+
+    </div>
+    <div id="vis"></div>
+  </div>
+
+  <script src='scroller.js'></script>
+  <script src='sections2.js'></script>
+</body>
+
+</html>
