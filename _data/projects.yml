@@ -123,3 +123,24 @@
   description: Interactive explainer for least-squares linear regression.
   tags: [javascript, viz, stats]
   category: mini
+
+- title: AXDD Conflicts of Interest
+  url: projects/axdd-coi/index.html
+  external: false
+  description: D3 visualization built during my UW internship exploring conflict-of-interest patterns.
+  tags: [javascript, viz, d3]
+  category: mini
+
+- title: Tutoring Visualizations
+  url: projects/tutor/index.html
+  external: false
+  description: A collection of visualizations I put together while tutoring a student — walkthroughs of concepts with visuals.
+  tags: [viz, education]
+  category: mini
+
+- title: Pro Bono Survival Analysis
+  url: projects/datafest/unstructuredata.pdf
+  external: false
+  description: DataFest submission — survival analysis on pro bono legal cases.
+  tags: [r, data-analysis, stats]
+  category: mini
