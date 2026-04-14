@@ -14,58 +14,49 @@ title: 'Work'
 </script>
 
 <h1>Projects & Work</h1>
-<p style="color: var(--text-secondary); font-size: 1.125rem; margin-bottom: 3rem;">
+<p style="color: var(--text-secondary); font-size: 1.125rem; margin-bottom: 2rem;">
   A collection of data analysis, visualization, and web development projects.
 </p>
 
-<h2>Featured Projects</h2>
-<ul class="projects-list">
-  <li>
-    <a href="projects/mqp/index.html">Interactive Boundary Map</a> - Major Qualifying Project featuring an interactive Google Maps visualization with KML boundary overlays and address search functionality. Built with JavaScript and Google Maps API.
-  </li>
-  <li>
-    <a href="projects/project_svd.html">SVD Analysis</a> - Applied SVD analysis to uncover the
-    polarization of American politics by examining the 90th and 116th congress roll calls. Built with R.
-  </li>
-  <li>
-    <a href="https://klobby19.shinyapps.io/nflbetting2020/" target="_blank">NFL Betting 2020</a> - An interactive
-    web dashboard to visualize NFL betting data and trends using R Shiny.
-  </li>
-  <li>
-    <a href="https://klobby19.shinyapps.io/nflpicks/" target="_blank">NFL Picks</a> - A fun dashboard visualizing
-    how well my friend and I are predicting NFL games, built with R Shiny.
-  </li>
-  <li>
-    <a href="https://musicvault.herokuapp.com/" target="_blank">Music Vault</a> - Search through my favorite music artists.
-    Backend built with Node.js, frontend with JavaScript, HTML, and CSS.
-  </li>
-  <li>
-    <a href="https://observablehq.com/d/f90eaa1c774a1b62" target="_blank">Survey of American Homelessness</a> - Interactive article
-    exploring the homeless problem in the United States with Vega-Lite visualizations.
-  </li>
-</ul>
+{% assign tag_list = "" | split: "" %}
+{% for project in site.data.projects %}
+  {% for tag in project.tags %}
+    {% assign tag_list = tag_list | push: tag %}
+  {% endfor %}
+{% endfor %}
+{% assign all_tags = tag_list | uniq | sort %}
 
-<hr class="section-divider">
+<div class="filter-bar" role="toolbar" aria-label="Filter projects by tag">
+  <button type="button" class="filter-pill active" data-tag="all">All</button>
+  {% for tag in all_tags %}
+    <button type="button" class="filter-pill" data-tag="{{ tag }}">{{ tag }}</button>
+  {% endfor %}
+</div>
 
-<h2>Mini-Projects</h2>
-<ul class="projects-list">
-  <li>
-    <a href="projects/wordle-bud/index.html">Wordle Score Tracker</a> - Track daily Wordle scores with friends!
-    Features include leaderboard rankings, daily results, tiebreaker logic, and score history. Built with vanilla JavaScript and localStorage.
-  </li>
-  <li>
-    <a href="https://kobesar.github.io/dashboards/dash1/index.html" target="_blank">Debt Dashboard</a> - Interactive dashboard
-    utilizing JavaScript to fetch data from APIs and visualize it with Plotly.
-  </li>
-  <li>
-    <a href="https://kobesar.github.io/dashboards/dash3/index.html" target="_blank">Crypto Donations</a> - Dashboard tracking
-    cryptocurrency (ETH and BTC) donations made to the Kyiv Independent.
-  </li>
-  <li>
-    <a href="https://klobby19.shinyapps.io/climate-change/" target="_blank">Emissions Dashboard</a> - Interactive
-    web dashboard to visualize greenhouse gas emission data and trends, built with R Shiny.
-  </li>
-</ul>
+<div class="project-grid">
+  {% for project in site.data.projects %}
+    <article class="project-card{% unless project.image %} no-image{% endunless %}" data-tags="{{ project.tags | join: ',' }}">
+      {% if project.image %}
+        <div class="project-card__image">
+          <img src="{{ project.image }}" alt="{{ project.title }}" loading="lazy">
+        </div>
+      {% endif %}
+      <div class="project-card__body">
+        <h3 class="project-card__title">
+          <a href="{{ project.url }}"{% if project.external %} target="_blank" rel="noopener"{% endif %}>{{ project.title }}</a>
+        </h3>
+        <p class="project-card__desc">{{ project.description }}</p>
+        <div class="project-tags">
+          {% for tag in project.tags %}
+            <span class="tag-chip">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</div>
+
+<p class="project-empty" hidden>No projects match that tag.</p>
 
 <hr class="section-divider">
 
@@ -78,3 +69,27 @@ title: 'Work'
     <i class="fab fa-twitter"></i> @swingmisstake
   </a>
 </div>
+
+<script>
+(function () {
+  const pills = document.querySelectorAll('.filter-pill');
+  const cards = document.querySelectorAll('.project-card');
+  const empty = document.querySelector('.project-empty');
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const tag = pill.dataset.tag;
+      let visible = 0;
+      cards.forEach(card => {
+        const tags = (card.dataset.tags || '').split(',');
+        const show = tag === 'all' || tags.includes(tag);
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      if (empty) empty.hidden = visible > 0;
+    });
+  });
+})();
+</script>

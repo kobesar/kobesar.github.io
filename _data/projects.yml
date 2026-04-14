@@ -1,0 +1,69 @@
+- title: Interactive Boundary Map
+  url: projects/mqp/index.html
+  external: false
+  description: Major Qualifying Project featuring an interactive Google Maps visualization with KML boundary overlays and address search functionality.
+  tags: [javascript, maps, viz]
+  category: featured
+
+- title: SVD Analysis
+  url: projects/project_svd.html
+  external: false
+  description: Applied SVD analysis to uncover the polarization of American politics by examining the 90th and 116th congress roll calls. Built with R.
+  tags: [r, data-analysis, politics]
+  category: featured
+
+- title: NFL Betting 2020
+  url: https://klobby19.shinyapps.io/nflbetting2020/
+  external: true
+  description: An interactive web dashboard to visualize NFL betting data and trends using R Shiny.
+  tags: [r-shiny, dashboard, sports]
+  category: featured
+
+- title: NFL Picks
+  url: https://klobby19.shinyapps.io/nflpicks/
+  external: true
+  description: A fun dashboard visualizing how well my friend and I are predicting NFL games, built with R Shiny.
+  tags: [r-shiny, dashboard, sports]
+  category: featured
+
+- title: Music Vault
+  url: https://musicvault.herokuapp.com/
+  external: true
+  description: Search through my favorite music artists. Backend built with Node.js, frontend with JavaScript, HTML, and CSS.
+  tags: [javascript, web, nodejs]
+  category: featured
+
+- title: Survey of American Homelessness
+  url: https://observablehq.com/d/f90eaa1c774a1b62
+  external: true
+  description: Interactive article exploring the homeless problem in the United States with Vega-Lite visualizations.
+  tags: [viz, data-analysis]
+  category: featured
+
+- title: Wordle Score Tracker
+  url: projects/wordle-bud/index.html
+  external: false
+  description: Track daily Wordle scores with friends — leaderboard rankings, daily results, tiebreaker logic, and score history. Built with vanilla JavaScript and localStorage.
+  tags: [javascript, web]
+  category: mini
+
+- title: Debt Dashboard
+  url: https://kobesar.github.io/dashboards/dash1/index.html
+  external: true
+  description: Interactive dashboard utilizing JavaScript to fetch data from APIs and visualize it with Plotly.
+  tags: [javascript, dashboard, viz]
+  category: mini
+
+- title: Crypto Donations
+  url: https://kobesar.github.io/dashboards/dash3/index.html
+  external: true
+  description: Dashboard tracking cryptocurrency (ETH and BTC) donations made to the Kyiv Independent.
+  tags: [javascript, dashboard, viz]
+  category: mini
+
+- title: Emissions Dashboard
+  url: https://klobby19.shinyapps.io/climate-change/
+  external: true
+  description: Interactive web dashboard to visualize greenhouse gas emission data and trends, built with R Shiny.
+  tags: [r-shiny, dashboard, viz]
+  category: mini
