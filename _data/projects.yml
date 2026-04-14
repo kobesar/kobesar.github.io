@@ -67,3 +67,59 @@
   description: Interactive web dashboard to visualize greenhouse gas emission data and trends, built with R Shiny.
   tags: [r-shiny, dashboard, viz]
   category: mini
+
+- title: Hall of Fame?
+  url: projects/baseball/hof/report2.html
+  external: false
+  description: A data-driven look at what makes a Hall of Famer — modeling induction odds for position players and pitchers.
+  tags: [baseball, data-analysis, viz, sports]
+  category: featured
+
+- title: Swing Scout
+  url: projects/swing-scout/index.html
+  external: false
+  description: AI golf swing analyzer — upload a photo and get structured coaching feedback powered by Claude's vision.
+  tags: [ai, web, sports]
+  category: featured
+
+- title: Fiscal Indicators vs. Stock Market
+  url: projects/stocks/index.html
+  external: false
+  description: Dashboard exploring how macro fiscal indicators move with the stock market.
+  tags: [javascript, dashboard, viz, finance]
+  category: mini
+
+- title: Crime in Seattle — Datathon 2023
+  url: projects/datathon/index.html
+  external: false
+  description: UW Datathon 2023 submission visualizing Seattle crime patterns with D3.
+  tags: [javascript, viz, data-analysis]
+  category: mini
+
+- title: Inducted Home Runs
+  url: projects/baseball/inductedhrs/index.html
+  external: false
+  description: Visualizing home run careers of Hall of Fame inductees.
+  tags: [baseball, viz, sports]
+  category: mini
+
+- title: Ukraine Crypto Donations
+  url: projects/cyrpto-ukraine/index.html
+  external: false
+  description: Tracks total BTC and ETH donations made to Ukrainian media outlets.
+  tags: [javascript, viz, crypto]
+  category: mini
+
+- title: eBay Force Layout
+  url: projects/ebay-cam/index.html
+  external: false
+  description: D3 force-directed visualization of eBay camera listings.
+  tags: [javascript, viz, d3]
+  category: mini
+
+- title: Least Squares Regression
+  url: projects/least-squares/lsr.html
+  external: false
+  description: Interactive explainer for least-squares linear regression.
+  tags: [javascript, viz, stats]
+  category: mini
