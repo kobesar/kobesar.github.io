@@ -576,6 +576,14 @@ h3 { font-size: 1.75rem; }
   flex: 1;
 }
 
+.project-card__meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: -0.25rem;
+}
+
 .project-card__title {
   font-size: 1.125rem;
   margin: 0;

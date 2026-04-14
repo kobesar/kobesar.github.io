@@ -33,8 +33,9 @@ title: 'Work'
   {% endfor %}
 </div>
 
+{% assign sorted_projects = site.data.projects | sort: "date" | reverse %}
 <div class="project-grid">
-  {% for project in site.data.projects %}
+  {% for project in sorted_projects %}
     <article class="project-card{% unless project.image %} no-image{% endunless %}" data-tags="{{ project.tags | join: ',' }}">
       {% if project.image %}
         <div class="project-card__image">
@@ -42,6 +43,9 @@ title: 'Work'
         </div>
       {% endif %}
       <div class="project-card__body">
+        <div class="project-card__meta">
+          {% if project.date %}<time class="project-card__date">{{ project.date | append: "-01" | date: "%b %Y" }}</time>{% endif %}
+        </div>
         <h3 class="project-card__title">
           <a href="{{ project.url }}"{% if project.external %} target="_blank" rel="noopener"{% endif %}>{{ project.title }}</a>
         </h3>
