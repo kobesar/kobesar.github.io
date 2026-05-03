@@ -165,3 +165,11 @@
   description: DataFest submission — survival analysis on pro bono legal cases.
   tags: [r, data-analysis, stats]
   category: mini
+
+- title: 2020 Election — Bootstrap & Logistic Regression
+  url: projects/stat403/index.html
+  external: false
+  date: 2023-06
+  description: STAT 403 project analyzing the 2020 election with bootstrap simulations and logistic regression to model state-level outcomes and key voter sentiment drivers.
+  tags: [r, data-analysis, stats, politics]
+  category: featured
