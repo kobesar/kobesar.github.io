@@ -1,0 +1,55 @@
+# ALL tunables for the MLB win-probability trading agent live here.
+# Validated by agent/config.py at startup (pydantic, unknown keys rejected).
+
+mode: paper                 # paper | live   (live is gated; see README Phase 3)
+
+market:
+  market_id: "MOCK-MLB"     # human label used in log filenames
+  token_id: ""              # Polymarket YES(home) ERC1155 token id (from --market)
+  pregame_prior: 0.54       # de-vigged home win prob, entered manually pregame
+
+feeds:
+  mlb_poll_seconds: 3.0
+  book_staleness_seconds: 10.0
+  clob_ws_url: "wss://ws-subscriptions-clob.polymarket.com/ws/market"
+  clob_rest_url: "https://clob.polymarket.com"
+  statsapi_base: "https://statsapi.mlb.com"
+
+fairvalue:
+  we_table_path: "data/we_table.csv"
+  min_cell_n: 200           # cells below this are shrunk toward neighbors
+  blend_w_start: 0.35       # weight on state WE at inning 1
+  blend_full_inning: 7      # weight reaches 1.0 here
+  clamp_low: 0.02
+  clamp_high: 0.98
+
+signal:
+  entry_threshold: 0.04     # MUST be > exit_threshold (hysteresis)
+  exit_threshold: 0.015
+  max_state_age: 20.0       # refuse to trade if GameState older than this
+  max_spread: 0.03
+  min_depth: 100.0          # shares within depth_band of mid required to enter
+  depth_band_cents: 0.02
+  post_change_cooldown: 8.0 # no entries within this many s of a state change
+  no_trade_from_inning: 9   # inning >= this: no new entries, flatten
+  max_hold_seconds: 600.0
+  per_position_stop: 30.0   # USD adverse mark -> forced exit
+  order_size: 400.0         # shares per entry
+
+execution:
+  taker_fee: 0.0            # fraction of notional applied to every sim fill
+  extra_slippage_cents: 0.01
+  maker_mode: false
+
+risk:
+  max_position_shares: 1000.0
+  max_position_usd: 600.0
+  max_total_usd: 500.0
+  per_game_loss_limit: 75.0
+  daily_loss_limit: 200.0
+  max_fv_jump: 0.15         # fv move w/o state change beyond this -> reject (bug guard)
+  max_orders_per_minute: 6
+  kill_file: "./KILL"
+  feed_disagreement_seconds: 30.0
+
+book_snapshot_every_seconds: 30.0

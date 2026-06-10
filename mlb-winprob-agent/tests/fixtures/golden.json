@@ -1,0 +1,1038 @@
+[
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 0.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 0.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 0.0,
+"marked": -0.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 0.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 0.0,
+"marked": 32.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 20.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 20.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 20.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 20.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 20.0,
+"marked": 8.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 32.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 32.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 32.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 32.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 32.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 32.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 32.0,
+"marked": 4.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 28.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 28.0,
+"marked": -8.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 24.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 24.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 36.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 32.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 76.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 80.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 84.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 92.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 92.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 88.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 72.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 24.0,
+"marked": 88.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 112.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 112.0,
+"marked": -8.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 112.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 112.0,
+"marked": -8.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 124.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 124.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 124.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 124.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 124.0,
+"marked": 16.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 124.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 124.0,
+"marked": -8.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 100.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 100.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 100.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 100.0,
+"marked": 36.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 100.0,
+"marked": 40.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 100.0,
+"marked": 76.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 100.0,
+"marked": 76.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 196.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 196.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 196.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 196.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 196.0,
+"marked": 0.0
+},
+{
+"action": "enter_short",
+"reason": "edge_short:approved",
+"position": -400.0,
+"realized": 196.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": -12.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": -20.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": 24.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": 20.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": 16.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": -400.0,
+"realized": 196.0,
+"marked": 16.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "edge_below_threshold",
+"position": 0.0,
+"realized": 220.0,
+"marked": 0.0
+},
+{
+"action": "enter_long",
+"reason": "edge_long:approved",
+"position": 400.0,
+"realized": 220.0,
+"marked": -8.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 220.0,
+"marked": -12.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 220.0,
+"marked": -4.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 220.0,
+"marked": 24.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 220.0,
+"marked": 20.0
+},
+{
+"action": "none",
+"reason": "holding",
+"position": 400.0,
+"realized": 220.0,
+"marked": 20.0
+},
+{
+"action": "exit",
+"reason": "edge_reverted",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "no_trade_inning",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "game_not_live",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+},
+{
+"action": "none",
+"reason": "game_not_live",
+"position": 0.0,
+"realized": 228.0,
+"marked": 0.0
+}
+]
