@@ -173,3 +173,11 @@
   description: STAT 403 project analyzing the 2020 election with bootstrap simulations and logistic regression to model state-level outcomes and key voter sentiment drivers.
   tags: [r, data-analysis, stats, politics]
   category: featured
+
+- title: Listening Moods
+  url: projects/listening-moods/index.html
+  external: false
+  date: 2026-10
+  description: Two years of YouTube Music listening (75,302 plays) clustered into eight moods. Explore mood by month, time of day, and top songs with an interactive timeline, heatmap and filters. Built with Python, scikit-learn and vanilla JavaScript.
+  tags: [javascript, viz, music, data-analysis]
+  category: featured
