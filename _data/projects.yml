@@ -174,10 +174,10 @@
   tags: [r, data-analysis, stats, politics]
   category: featured
 
-- title: Listening Moods
-  url: projects/listening-moods/index.html
+- title: The Listening Room
+  url: projects/listening-room/index.html
   external: false
-  date: 2026-10
-  description: Two years of YouTube Music listening (79,520 plays) clustered into eight moods. Explore mood by month, time of day, and top songs with an interactive timeline, heatmap and filters. Built with Python, scikit-learn and vanilla JavaScript.
-  tags: [javascript, viz, music, data-analysis]
+  date: 2026-11
+  description: A pixel-art room that plays back two years of YouTube Music listening (79,520 plays). Drag the timeline and the room changes with the music, with mood-colored lighting, Seattle seasons and weather in the window, a B&O hi-fi and two cats. Built with Python, scikit-learn and vanilla JavaScript on canvas.
+  tags: [javascript, canvas, viz, music, data-analysis]
   category: featured
